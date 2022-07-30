@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
             <div className="flex flex-auto">
                 <SideBar />
                 <div className="grow">
-                    <div>{children}</div>
+                    <div className="m-5">{children}</div>
                 </div>
             </div>
         </div>
