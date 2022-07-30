@@ -1,4 +1,4 @@
-import SideBar from "../components/SideBar";
+import SideBar from "../components/Dsahboard/SideBar";
 
 export default function DashBoard(){
     return(

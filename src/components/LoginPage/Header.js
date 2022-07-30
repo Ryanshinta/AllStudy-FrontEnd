@@ -11,11 +11,11 @@ export default function Header({
             <div className="flex justify-center">
                 <img
                     alt=""
-                    className="h-14 w-14"
-                    src={require('../assets/Logo.png')}
+                    className="h-14 w-30"
+                    src={require('../../assets/Logo.png')}
                 />
             </div>
-            <h2 className="mt-6 text-center text-3xl font-extra bold text-gray-900">
+            <h2 className="mt-6 text-center text-3xl font-extra bold text-gray-900 font-medium">
                 {heading}
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600 mt-5">

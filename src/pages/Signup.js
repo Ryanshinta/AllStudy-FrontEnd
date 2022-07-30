@@ -1,5 +1,5 @@
-import Header from "../components/Header";
-import Signup from "../components/Signup";
+import Header from "../components/LoginPage/Header";
+import Signup from "../components/LoginPage/Signup";
 
 export default function SignupPage(){
     return(
