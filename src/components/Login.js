@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { loginFields } from "../constants/formFields";
+import {useState} from 'react';
+import {loginFields} from "../constants/formFields";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
 import Input from "./Input";
@@ -17,6 +17,7 @@ export default function Login(){
 
     const handleSubmit=(e)=>{
         e.preventDefault();
+
         authenticateUser();
     }
 
