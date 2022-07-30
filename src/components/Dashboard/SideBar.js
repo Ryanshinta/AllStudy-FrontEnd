@@ -11,10 +11,10 @@ export default function SideBar() {
     const [open, setOpen] = React.useState(false);
 
     const Menus = [
-        { title: 'Dashboard', path: '/dashboard', src: <AiFillPieChart /> },
-        { title: 'Course', path: '/course', src: <SiFuturelearn /> },
-        { title: 'Profile', path: '/profile', src: <CgProfile /> },
-        { title: 'Signin', path: '/login', src: <SiOpenaccess />, gap: 'true' },
+        { title: 'Dashboard', path: '/', src: <AiFillPieChart /> },
+        { title: 'Course', path: '/', src: <SiFuturelearn /> },
+        { title: 'Profile', path: '/', src: <CgProfile /> },
+        { title: 'Signin', path: '/', src: <SiOpenaccess />, gap: 'true' },
     ]
 
 
@@ -33,7 +33,7 @@ export default function SideBar() {
                 />
                 <Link to='/'>
                     <div className={`flex ${open && 'gap-x-4'}items-center`}>
-                        <img src={require('../../assets/LogoW.png')} className="w-10 pl-2"></img>
+                        <img src={require('../../assets/LogoW.png')} className="w-10 pl-2" alt="Logo"></img>
                         {open && <span className='text-xl font-medium whitespace-nowrap dark:text-white space-x-0.5'>&nbsp;&nbsp;&nbsp;&nbsp;AllStudy</span>}
                     </div>
                 </Link>
