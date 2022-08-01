@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
     return (
         <Background>
         <div>
-            <div className="flex flex-auto right-0">
+            <div className="flex flex-auto right-0 a">
                 <SideBar />
                 <div className="grow">
                     <TopBar/>
