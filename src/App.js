@@ -5,6 +5,7 @@ import LoginPage from './pages/Login';
 
 import DashBoard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import RoomNavigation from "./pages/RoomNavigation";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                         <Route path="/signup" element={<SignupPage/>} />
                         <Route path="/app" element={<DashBoard/>} />
                         <Route path="/Profile" element={<Profile/>} />
+                        <Route path="/RoomNavigation" element={<RoomNavigation/>} />
                     </Routes>
                 </BrowserRouter>
             </div>
