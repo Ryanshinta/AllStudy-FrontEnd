@@ -13,7 +13,7 @@ export default function SideBar() {
     const Menus = [
         { title: 'Dashboard', path: '/', src: <AiFillPieChart /> },
         { title: 'Course', path: '/', src: <SiFuturelearn /> },
-        { title: 'Profile', path: '/Profile', src: <CgProfile /> },
+        { title: 'UserProfile', path: '/UserProfile', src: <CgProfile /> },
         { title: 'Signin', path: '/', src: <SiOpenaccess />, gap: 'true' },
     ]
 

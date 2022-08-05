@@ -14,7 +14,9 @@ const Layout = ({ children }) => {
                 <SideBar />
                 <div className="grow">
                     <TopBar/>
-                    <div className="m-5">{children}</div>
+                    <div className="m-5">
+                        {children}
+                    </div>
                 </div>
             </div>
         </div>
