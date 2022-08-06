@@ -25,7 +25,7 @@ export default function RoomNavigation(){
                 'tas tibique copiosae mei. No nam vidit omittam invenire,' +
                 ' at corpora persecuti interpretaris sed.',
             userName: 'User1',
-            userAvatar: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=60' },
+            userAvatar: 'https://miro.medium.com/max/720/1*W35QUSvGpcLuxPo3SRTH4w.png' },
 
 
         {   title: 'Private Room2',

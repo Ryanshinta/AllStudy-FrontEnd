@@ -6,6 +6,7 @@ import LoginPage from './pages/Login';
 import DashBoard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import RoomNavigation from "./pages/RoomNavigation";
+import Room from "./pages/Room";
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                         <Route path="/app" element={<DashBoard/>} />
                         <Route path="/Profile" element={<Profile/>} />
                         <Route path="/RoomNavigation" element={<RoomNavigation/>} />
+                        <Route path="/Room" element={<Room/>} />
                     </Routes>
                 </BrowserRouter>
             </div>
