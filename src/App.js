@@ -7,6 +7,7 @@ import DashBoard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import RoomNavigation from "./pages/RoomNavigation";
 import Room from "./pages/Room";
+import Community from "./pages/Community";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                         <Route path="/Profile" element={<Profile/>} />
                         <Route path="/RoomNavigation" element={<RoomNavigation/>} />
                         <Route path="/Room" element={<Room/>} />
+                        <Route path="/Community" element={<Community/>} />
                     </Routes>
                 </BrowserRouter>
             </div>
