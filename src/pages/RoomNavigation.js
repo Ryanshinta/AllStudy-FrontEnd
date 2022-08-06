@@ -76,7 +76,7 @@ export default function RoomNavigation(){
                     {/*    </div>*/}
                     {/*</div>*/}
                     <div className="mt-8 flex items-center space-x-2 st-onboarding-dashboard-step-2"><h3
-                        className="text-lg font-bold leading-[24px] text-gray-300">Study Together Rooms</h3></div>
+                        className="text-lg font-bold leading-[24px] text-gray-300">AllStudy Rooms</h3></div>
                     <div className="mt-5 mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {PublicRoom.map((Room, index) => (
 
