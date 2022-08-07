@@ -1,5 +1,6 @@
 import React from "react";
-
+import {FormControl, FormControlLabel, FormLabel, RadioGroup} from "@mui/material";
+import {Radio} from "@mui/icons-material";
 
 
 const NewRoom = () =>  {
@@ -14,11 +15,11 @@ const NewRoom = () =>  {
       >
         Create Room
       </button>
-        
+
       {showModal ? (
         <>
           <div
-            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+                className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none p-8 "
           >
             <div className="relative w-auto my-6 mx-auto max-w-3xl">
               {/*content*/}
@@ -43,7 +44,13 @@ const NewRoom = () =>  {
                         <input type="RoomName" id="RoomName" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer" placeholder=" " required  />
                         <label htmlFor="NumberOfparticipants" className="peer-placeholder-shown ">Number Of participants</label>
                         <input type="NumberOfparticipants" id="NumberOfparticipants" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 peer" placeholder=" " required  />
-
+                        <FormControl>
+                            <FormLabel>Type of Room</FormLabel>
+                            <RadioGroup>
+                                <FormControlLabel value="Public Room" control={<Radio />} label="Public Room" />
+                                <FormControlLabel value="male" control={<Radio />} label="Male" />
+                            </RadioGroup>
+                        </FormControl>
 
                     </div>
 
@@ -67,7 +74,7 @@ const NewRoom = () =>  {
                   >
                     Save Changes
                   </button>
-                  
+
                 </div>
               </div>
             </div>
@@ -77,7 +84,7 @@ const NewRoom = () =>  {
       ) : null}
 
 
-        </>    
+        </>
     )
 }
 
