@@ -18,16 +18,16 @@ const UserProfile = () =>  {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
                 <th scope="col" className="py-3 px-6">
-                    Product name
+                    Name
                 </th>
                 <th scope="col" className="py-3 px-6">
-                    Color
+                    Email
                 </th>
                 <th scope="col" className="py-3 px-6">
-                    Category
+                    Gender
                 </th>
                 <th scope="col" className="py-3 px-6">
-                    Price
+                    Age
                 </th>
             </tr>
         </thead>
