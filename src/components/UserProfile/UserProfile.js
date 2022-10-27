@@ -1,5 +1,7 @@
 import React from "react";
 import Button from '@mui/material/Button';
+import {TextField} from "@mui/material";
+import { CheckBox } from "@mui/icons-material";
 
 
 const UserProfile = () =>  {
@@ -14,68 +16,45 @@ const UserProfile = () =>  {
             <span className="text-sm text-gray-500 dark:text-gray-400">testingemail123@gmail.com</span>
             <div className="overflow-x-auto relative">
                 <br></br>
-    <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
-                <th scope="col" className="py-3 px-6">
-                    Name
-                </th>
-                <th scope="col" className="py-3 px-6">
-                    Email
-                </th>
-                <th scope="col" className="py-3 px-6">
-                    Gender
-                </th>
-                <th scope="col" className="py-3 px-6">
-                    Age
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Apple MacBook Pro 17"
-                </th>
-                <td className="py-4 px-6">
-                    Sliver
-                </td>
-                <td className="py-4 px-6">
-                    Laptop
-                </td>
-                <td className="py-4 px-6">
-                    $2999
-                </td>
-            </tr>
-            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Microsoft Surface Pro
-                </th>
-                <td className="py-4 px-6">
-                    White
-                </td>
-                <td className="py-4 px-6">
-                    Laptop PC
-                </td>
-                <td className="py-4 px-6">
-                    $1999
-                </td>
-            </tr>
-            <tr className="bg-white dark:bg-gray-800">
-                <th scope="row" className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                    Magic Mouse 2
-                </th>
-                <td className="py-4 px-6">
-                    Black
-                </td>
-                <td className="py-4 px-6">
-                    Accessories
-                </td>
-                <td className="py-4 px-6">
-                    $99
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div>
+<div className="p-2">        
+<form>
+    <div className="grid gap-6 mb-5 md:grid-cols-2">
+        <div>
+            <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">First name</label>
+            <TextField type="text" id="first_name"  size="small" placeholder="John" required=""></TextField>
+        </div>
+        <div>
+            <label for="last_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Last name</label>
+            <TextField type="text" id="last_name" size="small" placeholder="Doe" required=""></TextField>
+        </div>
+        <div>
+            <label for="company" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Company</label>
+            <TextField type="text" id="company" size="small" placeholder="Flowbite" required=""></TextField>
+        </div>  
+        <div>
+            <label for="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Phone number</label>
+            <TextField type="tel" id="phone" size="small" placeholder="123-45-678" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required=""></TextField>
+        </div>
+    </div>
+    <div className="mb-5">
+        <label for="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email address</label>
+        <TextField type="email" id="email" className="text-2xl w-full" size="small" placeholder="john.doe@company.com" required=""></TextField>
+    </div> 
+    <div className="mb-5">
+        <label for="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
+        <TextField type="password" id="password" className="text-2xl w-full" size="small" placeholder="•••••••••" required=""></TextField>
+    </div> 
+    <div className="mb-5">
+        <label for="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Confirm password</label>
+        <TextField type="password" id="confirm_password" className="text-2xl w-full" size="small" placeholder="•••••••••" required=""></TextField>
+    </div> 
+
+    <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+</form>
+</div>
+    </div>
+
 </div>
             <div className="flex mt-4 space-x-3 lg:mt-6">
                 <a href="#" className="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Add friend</a>
