@@ -2,6 +2,8 @@ import React from "react";
 import {Link, useLocation} from "react-router-dom";
 import {AiFillPieChart, AiOutlineArrowLeft} from "react-icons/ai";
 import {SiFuturelearn, SiOpenaccess} from "react-icons/si";
+import {BiVideo, BiChat, BiBarChartAlt2, BiUserPlus, BiNotepad, BiCompass, BiLogInCircle, BiLogOutCircle} from "react-icons/bi";
+import {BsPeople} from "react-icons/bs";
 import {CgProfile} from "react-icons/cg";
 
 
@@ -11,10 +13,15 @@ export default function SideBar() {
     const [open, setOpen] = React.useState(false);
 
     const Menus = [
-        { title: 'Dashboard', path: '/', src: <AiFillPieChart /> },
-        { title: 'Course', path: '/', src: <SiFuturelearn /> },
-        { title: 'UserProfile', path: '/Profile', src: <CgProfile /> },
-        { title: 'Signin', path: '/', src: <SiOpenaccess />, gap: 'true' },
+        { title: 'Dashboard', path: '/', src: <BiBarChartAlt2 /> },
+        { title: 'Study Room', path: '/StudyRoom', src: <BiVideo /> },
+        { title: 'Chat Room', path: '/', src: <BiChat /> },
+        { title: 'Study Partner', path: '/Partner', src: <BiUserPlus /> },
+        { title: 'Community', path: '/', src: <BiCompass /> },
+        { title: 'To-Do List', path: '/', src: <BiNotepad /> },
+        { title: 'My Profile', path: '/Profile', src: <CgProfile />, gap: 'true' },
+        { title: 'Sign In', path: '/', src: <BiLogInCircle />},
+        { title: 'Sign Out', path: '/', src: <BiLogOutCircle />},
     ]
 
 
@@ -23,7 +30,7 @@ export default function SideBar() {
             <div
                 className={`${
                     open ? 'w-60' : 'w-fit'
-                } hidden sm:block relative h-screen duration-300 bg-gray-100 border-r border-gray-200 dark:border-gray-600 p-5 dark:bg-slate-800`}
+                } hidden sm:block fixed min-h-full duration-300 bg-gray-100 border-r border-gray-200 dark:border-gray-600 p-5 dark:bg-slate-800`}
             >
                 <AiOutlineArrowLeft
                     className={`${
@@ -42,7 +49,7 @@ export default function SideBar() {
                         <Link to={menu.path} key={index}>
                             <li
                                 className={`flex items-center gap-x-6 p-3 text-base font-normal rounded-lg cursor-pointer dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700
-                        ${menu.gap ? 'mt-9' : 'mt-2'} ${
+                        ${menu.gap ? 'mt-16' : 'mt-2'} ${
                                     location.pathname === menu.path &&
                                     'bg-gray-200 dark:bg-gray-700'
                                 }`}

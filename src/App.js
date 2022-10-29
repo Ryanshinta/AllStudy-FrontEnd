@@ -5,6 +5,7 @@ import LoginPage from './pages/Login';
 
 import DashBoard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
+import Partner from "./pages/Partner"
 import RoomNavigation from "./pages/RoomNavigation";
 import Room from "./pages/Room";
 import Community from "./pages/Community";
@@ -19,6 +20,7 @@ function App() {
                         <Route path="/signup" element={<SignupPage/>} />
                         <Route path="/app" element={<DashBoard/>} />
                         <Route path="/Profile" element={<Profile/>} />
+                        <Route path="/Partner" element={<Partner/>} />
                         <Route path="/RoomNavigation" element={<RoomNavigation/>} />
                         <Route path="/Room" element={<Room/>} />
                         <Route path="/Community" element={<Community/>} />

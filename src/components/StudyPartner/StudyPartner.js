@@ -4,7 +4,7 @@ import {TextField} from "@mui/material";
 import { CheckBox } from "@mui/icons-material";
 
 
-const UserProfile = () =>  {
+const StudyPartner = () =>  {
     return (
     // <div className="max-w-screen-xl my-4 mx-12 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col items-center pb-10">
@@ -64,4 +64,4 @@ const UserProfile = () =>  {
     )
 }
 
-export default UserProfile;
+export default StudyPartner;
