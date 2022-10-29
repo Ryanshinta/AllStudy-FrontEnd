@@ -8,57 +8,71 @@ const StudyPartner = () =>  {
     return (
     // <div className="max-w-screen-xl my-4 mx-12 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="flex flex-col items-center pb-10">
-            <img className="mb-3 w-24 h-24 rounded-full shadow-lg" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/1200px-Gmail_icon_%282020%29.svg.png" alt="Profile Pic"/>
-            <h5 className="mb-1 text-xl font-medium text-gray-900 dark:text-white">Testing User</h5>
-            <span className="text-sm text-gray-500 dark:text-gray-400">testingemail123@gmail.com</span>
-            <div className="overflow-x-auto relative">
-                <br></br>
-    <div>
-<div className="p-2">        
-<form>
-    <div className="grid gap-6 mb-5 md:grid-cols-2">
-        <div>
-            <label for="first_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">First name</label>
-            <TextField type="text" id="first_name" size="small" placeholder="John" required=""></TextField>
-        </div>
-        <div>
-            <label for="last_name" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Last name</label>
-            <TextField type="text" id="last_name" size="small" placeholder="Doe" required=""></TextField>
-        </div>
-        <div>
-            <label for="gender" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Gender</label>
-            <select id="gender" class=" border text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-  <option selected>Choose an option</option>
-  <option value="F">Female</option>
-  <option value="M">Male</option>
-</select>
-        </div>  
-        <div>
-            <label for="phone" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Phone number</label>
-            <TextField type="tel" id="phone" size="small" placeholder="123-45-678" pattern="[0-9]{3}-[0-9]{2}-[0-9]{3}" required=""></TextField>
-        </div>
-    </div>
-    <div className="mb-5">
-        <label for="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Email address</label>
-        <TextField type="email" id="email" className="text-2xl w-full" size="small" placeholder="john.doe@company.com" required=""></TextField>
-    </div> 
-    <div className="mb-5">
-        <label for="password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Password</label>
-        <TextField type="password" id="password" className="text-2xl w-full" size="small" placeholder="•••••••••" required=""></TextField>
-    </div> 
-    <div className="mb-5">
-        <label for="confirm_password" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Confirm password</label>
-        <TextField type="password" id="confirm_password" className="text-2xl w-full" size="small" placeholder="•••••••••" required=""></TextField>
-    </div> 
-</form>
+            
+<div class="overflow-x-auto relative">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="py-3 px-6">
+                    Product name
+                </th>
+                <th scope="col" class="py-3 px-6">
+                    Color
+                </th>
+                <th scope="col" class="py-3 px-6">
+                    Category
+                </th>
+                <th scope="col" class="py-3 px-6">
+                    Price
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Apple MacBook Pro 17"
+                </th>
+                <td class="py-4 px-6">
+                    Sliver
+                </td>
+                <td class="py-4 px-6">
+                    Laptop
+                </td>
+                <td class="py-4 px-6">
+                    $2999
+                </td>
+            </tr>
+            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Microsoft Surface Pro
+                </th>
+                <td class="py-4 px-6">
+                    White
+                </td>
+                <td class="py-4 px-6">
+                    Laptop PC
+                </td>
+                <td class="py-4 px-6">
+                    $1999
+                </td>
+            </tr>
+            <tr class="bg-white dark:bg-gray-800">
+                <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    Magic Mouse 2
+                </th>
+                <td class="py-4 px-6">
+                    Black
+                </td>
+                <td class="py-4 px-6">
+                    Accessories
+                </td>
+                <td class="py-4 px-6">
+                    $99
+                </td>
+            </tr>
+        </tbody>
+    </table>
 </div>
-    </div>
-
-</div>
-            <div className="flex mt-4 space-x-3 lg:mt-2">
-                <a href="#" className="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Update Info</a>
-                <a href="#" className="inline-flex items-center py-2 px-4 text-sm font-medium text-center text-gray-900 bg-white rounded-lg border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-700 dark:focus:ring-gray-700">Back</a>
-            </div>
         </div>
     // </div>
     )
