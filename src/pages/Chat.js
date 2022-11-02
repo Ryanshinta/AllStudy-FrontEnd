@@ -5,7 +5,9 @@ export default function Chat(){
     return(
         <>
             <Layout>
+                <div className="ml-5 mr-5">
                 <ChatRoom/>
+                </div>
             </Layout>
         </>
     )

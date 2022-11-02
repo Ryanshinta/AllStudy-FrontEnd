@@ -5,7 +5,9 @@ export default function Profile(){
     return(
         <>
             <Layout>
+                <div className="m-5">
                 <UserProfile/>
+                </div>
             </Layout>
         </>
     )
