@@ -2,7 +2,7 @@ import Header from "../components/LoginPage/Header";
 import Login from "../components/LoginPage/Login";
 import Layout from "../components/LoginPage/Layout";
 
-export default function LoginPage(){
+export default function SignInPage(){
     return(
         <>
             <Layout>
