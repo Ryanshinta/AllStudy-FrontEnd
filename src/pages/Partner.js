@@ -5,7 +5,7 @@ export default function Partner(){
     return(
         <>
             <Layout>
-                <div className="m-5">
+                <div className="mx-5">
                 <StudyPartner/>
                 </div>
             </Layout>

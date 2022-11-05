@@ -9,13 +9,13 @@ const ChatRoom = () =>  {
 <div>
         <div className="container mx-auto" >
             <div className="py-6 h-screen">
-                <div className="flex border border-grey rounded shadow-lg h-full">
+                <div className="flex border border-grey rounded shadow-lg h-full dark:bg-stone-200">
 
                     <div className="w-1/3 border flex flex-col">
 
                         <div className="py-2 px-3 bg-stone-100 flex flex-row justify-between items-center">
                             <div>
-                                <img className="w-10 h-10 rounded-full" src="http://andressantibanez.com/res/avatar.png"/>
+                                <img className="w-10 h-10 rounded-full" src="https://64.media.tumblr.com/69a671c9b7d6ba05566d303c7f8b64aa/3e36901baab23038-d0/s540x810/368919b24f0328825a8d91555f7a1cb31e9af740.jpg"/>
                             </div>
 
                             <div className="flex">
@@ -170,7 +170,7 @@ const ChatRoom = () =>  {
                             <div className="py-2 px-3">
 
                                 <div className="flex justify-center mb-2">
-                                    <div className="rounded py-2 px-4 bg-blue-100" >
+                                    <div className="rounded py-2 px-4 bg-blue-100 dark:bg-white" >
                                         <p className="text-sm uppercase">
                                             February 20, 2018
                                         </p>
