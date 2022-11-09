@@ -8,6 +8,7 @@ import FormExtra from "./FormExtra";
 import {useNavigate} from "react-router-dom";
 import {Formik} from "formik";
 import Form from "react-bootstrap/Form";
+// import "bootstrap/dist/css/bootstrap.min.css";
 
 const fields=loginFields;
 let fieldsState = {};
@@ -127,28 +128,28 @@ export default function SignIn(){
                             {/*    )*/}
                             {/*}*/}
                             <Form.Group controlId="signInEmail">
-                            <Form.Control
-                                type="email"
-                                name="email"
-                                placeholder="Email"
-                                value={values.email}
-                                onChange={handleChange}
-                                isInvalid={touched.email && errors.email}
-                            />
+                                <Form.Control
+                                    type="email"
+                                    name="email"
+                                    placeholder="Email"
+                                    value={values.email}
+                                    onChange={handleChange}
+                                    isInvalid={touched.email && errors.email}
+                                />
                                 <Form.Control.Feedback type="invalid">
                                     Please enter a valid email
                                 </Form.Control.Feedback>
                             </Form.Group>
                             <br/>
                             <Form.Group controlId="signInPassword">
-                            <Form.Control
-                                type="password"
-                                name="password"
-                                placeholder="Password"
-                                value={values.password}
-                                onChange={handleChange}
-                                isInvalid={touched.password && errors.password}
-                            />
+                                <Form.Control
+                                    type="password"
+                                    name="password"
+                                    placeholder="Password"
+                                    value={values.password}
+                                    onChange={handleChange}
+                                    isInvalid={touched.password && errors.password}
+                                />
                                 <Form.Control.Feedback type="invalid">
                                     Please enter your password
                                 </Form.Control.Feedback>
