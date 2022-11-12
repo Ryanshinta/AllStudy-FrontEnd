@@ -1,7 +1,6 @@
 import {useState} from 'react';
 import * as yup from "yup";
 import axios from "axios";
-import {loginFields} from "../../constants/formFields";
 import { toast, ToastContainer } from "react-toastify";
 import FormAction from "./FormAction";
 import FormExtra from "./FormExtra";
@@ -9,13 +8,8 @@ import {useNavigate} from "react-router-dom";
 import {Formik} from "formik";
 import Form from "react-bootstrap/Form";
 
-const fields=loginFields;
-let fieldsState = {};
-fields.forEach(field=>fieldsState[field.id]='');
-
 
 export default function SignIn(){
-    const [loginState,setLoginState]=useState(fieldsState);
 
     const [resData, setResData] = useState(null);
 
@@ -26,14 +20,10 @@ export default function SignIn(){
         password: yup.string().required(),
     });
 
-    const handleChange=(e)=>{
-        setLoginState({...loginState,[e.target.id]:e.target.value})
-    }
-
-    const handleSubmit=(e)=>{
-        e.preventDefault();
-        authenticateUser();
-    }
+    // const handleSubmit=(e)=>{
+    //     e.preventDefault();
+    //     authenticateUser();
+    // }
 
     async function postSignInInfo(inputData){
         const response = await axios({
@@ -44,7 +34,9 @@ export default function SignIn(){
                 password: inputData.password,
             },
         });
+
         if (response.data !== null && response.data.status === "fail") {
+            console.log(response);
             showWarningToast(response.data.message);
         }
 
@@ -55,17 +47,17 @@ export default function SignIn(){
             localStorage.setItem("UserName",response.data.payload.user.Name);
             localStorage.setItem("UserEmail",response.data.payload.user.email);
             localStorage.setItem("Token",response.data.payload.user.token);
-            navigate("/Dashboard");
+            navigate("/#/Dashboard");
 
         }
     }
 
-    //Handle Login API Integration here
-    const authenticateUser = (values) =>{
-        //console.log("Login")
-        postSignInInfo(values);
-
-    }
+    // //Handle Login API Integration here
+    // const authenticateUser = (values) =>{
+    //     //console.log("Login")
+    //     postSignInInfo(values);
+    //
+    // }
 
     function showWarningToast(inputMessage) {
         toast.warn("Invalid email or password", {
@@ -82,6 +74,8 @@ export default function SignIn(){
     }
 
     return(
+        <>
+        <ToastContainer />
         <Formik
             validationSchema={schema}
             initialValues={{
@@ -104,28 +98,12 @@ export default function SignIn(){
                      isInValid,
                      errors,
                  }) => (
+
                     <form
                         noValidate
                         className="mt-8 space-y-6"
                         onSubmit={handleSubmit}>
                         <div className="-space-y-px">
-                            {/*{*/}
-                            {/*    fields.map(field=>*/}
-                            {/*        <Input*/}
-                            {/*            key={field.id}*/}
-                            {/*            handleChange={handleChange}*/}
-                            {/*            value={loginState[field.id]}*/}
-                            {/*            labelText={field.labelText}*/}
-                            {/*            labelFor={field.labelFor}*/}
-                            {/*            id={field.id}*/}
-                            {/*            name={field.name}*/}
-                            {/*            type={field.type}*/}
-                            {/*            isRequired={field.isRequired}*/}
-                            {/*            placeholder={field.placeholder}*/}
-                            {/*        />*/}
-
-                            {/*    )*/}
-                            {/*}*/}
                             <Form.Group controlId="signInEmail">
                             <Form.Control
                                 type="email"
@@ -164,5 +142,6 @@ export default function SignIn(){
 
 
         </Formik>
+        </>
     )
 }

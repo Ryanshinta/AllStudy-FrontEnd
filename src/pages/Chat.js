@@ -1,5 +1,6 @@
 import Layout from "../components/Dashboard/Layout";
 import ChatRoom from "../components/ChatRoom/ChatRoom.js";
+import '../index.css';
 
 export default function Chat(){
     return(
