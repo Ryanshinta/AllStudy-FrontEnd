@@ -1,6 +1,6 @@
 
 import {HashRouter, Route, Routes,} from "react-router-dom";
-import SignupPage from './pages/Signup';
+import Signup from './pages/Signup';
 import SignInPage from './pages/Signin';
 
 import DashBoard from "./pages/Dashboard";
@@ -21,7 +21,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<HomePage/>} />
                         <Route path="/signin" element={<SignInPage/>} />
-                        <Route path="/signup" element={<SignupPage/>} />
+                        <Route path="/Signup" element={<Signup/>} />
                         <Route path="/app" element={<DashBoard/>} />
                         <Route path="/Profile" element={<Profile/>} />
                         <Route path="/Partner" element={<Partner/>} />
