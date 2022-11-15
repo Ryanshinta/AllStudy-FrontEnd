@@ -37,7 +37,7 @@ export default function SignIn(){
         });
 
         if (response.data !== null && response.data.status === "fail") {
-            console.log(response);
+
             showWarningToast(response.data.message);
         }
 
@@ -45,10 +45,11 @@ export default function SignIn(){
             setResData(response.data);
 
             localStorage.setItem("UserID",response.data.payload.user.id);
-            localStorage.setItem("UserName",response.data.payload.user.Name);
+            localStorage.setItem("UserName",response.data.payload.user.name);
             localStorage.setItem("UserEmail",response.data.payload.user.email);
-            localStorage.setItem("Token",response.data.payload.user.token);
-            navigate("/#/Dashboard");
+            localStorage.setItem("Token",response.data.payload.token);
+            console.log(response);
+            //navigate("/Dashboard");
 
         }
     }

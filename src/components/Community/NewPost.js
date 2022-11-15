@@ -4,6 +4,8 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import {getFollowingPosts} from "../../feature/followingPostSlice";
 import imageCompression from "browser-image-compression";
+import Button from "@mui/material/Button";
+import 'react-toastify/dist/ReactToastify.css';
 
 function NewPost() {
     const dispatch = useDispatch();
@@ -64,13 +66,13 @@ function NewPost() {
         try {
             const response = await axios({
                 method: "post",
-                url: "http://localhost:8765/api/insertpost",
+                url: "http://localhost:8765/api/insertPost",
                 headers: {
                     Authorization: localStorage.getItem("Token"),
                 },
                 data: {
                     id: null,
-                    userId: localStorage.getItem("UserId"),
+                    userId: localStorage.getItem("UserID"),
                     content: inputContent,
                     image: file64StringWithType,
                     createdAt: null,
@@ -79,6 +81,7 @@ function NewPost() {
                     comment: null,
                 },
             });
+            console.log(response.data)
             if (response.data !== null && response.data.status === "success") {
                 showSuccessMessage("Posted successfully!");
                 setPostContent("");
@@ -153,29 +156,43 @@ function NewPost() {
             <div className="rounded-lg bg-white flex flex-col p-3 px-4 shadow">
                 <div className="items-center space-x-2 border-b pb-3 mb-2">
                     <div>
-
+                        <form>
                         <div className="flex items-center space-x-2 border-b pb-3 mb-2">
                             <div className="w-10 h-10"><img src="https://picsum.photos/200"
                                                             className="w-full h-full rounded-full"
                                                             alt="dp"/></div>
-                            <input
+                            <input placeholder="Content here" value={postContent} onChange={handleContentChange}
                                 className="hover:bg-gray-200 focus:bg-gray-300 p-2 focus:outline-none flex-grow bg-gray-100 text-gray-500 text-left w-full">
                             </input>
                         </div>
-
-
                         <div className="flex space-x-3 font-thin text-sm text-gray-600 -mb-1">
-                            <button
-                                className="flex-1 flex items-center h-8 focus:outline-none focus:bg-gray-200 justify-center space-x-2 hover:bg-gray-100 rounded-md">
-                                <div><i className="fas fa-images text-green-500"></i></div>
-                                <div><p className="font-semibold">Add Photos/Video</p></div>
-                            </button>
-                            <button
+                            <input type="file" accept="image/*" multiple onChange={onUploadFileChange} />Photo
+
+                            {/*<Button className="flex-1 flex items-center h-8 focus:outline-none focus:bg-gray-200 justify-center space-x-2 hover:bg-gray-100 rounded-md">*/}
+                            {/*    <div><i className="far fa-smile text-yellow-500"></i></div>*/}
+                            {/*    <div><p className="font-semibold">Photo</p></div>*/}
+                            {/*</Button>*/}
+
+
+                            {/*<button*/}
+                            {/*    className="flex-1 flex items-center h-8 focus:outline-none focus:bg-gray-200 justify-center space-x-2 hover:bg-gray-100 rounded-md">*/}
+                            {/*    <div><i className="far fa-smile text-yellow-500"></i></div>*/}
+                            {/*    <div><p className="font-semibold">Send</p></div>*/}
+                            {/*</button>*/}
+                            <Button onClick={handleCreatePost} disabled={disablePostButton}
                                 className="flex-1 flex items-center h-8 focus:outline-none focus:bg-gray-200 justify-center space-x-2 hover:bg-gray-100 rounded-md">
                                 <div><i className="far fa-smile text-yellow-500"></i></div>
                                 <div><p className="font-semibold">Send</p></div>
-                            </button>
+                            </Button>
+                            <span>Characters: {postContentCount}/200</span>
                         </div>
+                        </form>
+                        {file64String !== null ? (
+                            <img src={file64StringWithType} alt="chosen" />
+                        ) : (
+                            <span></span>
+                        )}
+
                     </div>
                 </div>
             </div>

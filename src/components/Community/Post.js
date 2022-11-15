@@ -26,7 +26,7 @@ function Post(props) {
     const timeAgo = new TimeAgo("en-US");
 
     function handleLikeClick(e){
-        if (!props.likeList.include(currentUserId)){
+        if (!props.likeList.includes(currentUserId)){
             setLikeState(true);
             dispatch(addLike({postId: postId, userId: currentUserId}));
         }else {
@@ -67,7 +67,7 @@ function Post(props) {
 
 
     return (
-        <div className="w-full shadow h-auto bg-white rounded-md">
+        <div className="w-full shadow h-auto bg-white rounded-md m-2">
             <div className="flex items-center space-x-2 p-2.5 px-4">
                 <div className="w-10 h-10"><img src="https://picsum.photos/200"
                                                 className="w-full h-full rounded-full"
@@ -82,9 +82,11 @@ function Post(props) {
                 className="text-gray-700 max-h-10 truncate px-3 text-sm">{props.content}</p></div>
 
             {props.image !== null ? (
-                <div className="w-full h-76 max-h-80 justify-content-center align-items-center mb-3"><img
+                <div className="w-full h-76 max-h-80 justify-content-center align-items-center mb-3">
+                    <img
                     src={props.image} alt="postimage"
-                    className="w-full h-76 max-h-80"/></div>
+                    className="w-fit h-fit max-h-80 items-center"/>
+                </div>
             ):(
                 <span></span>
             )}
@@ -93,18 +95,15 @@ function Post(props) {
                 <div
                     className="flex items-center justify-between pb-2 border-b border-gray-300 text-gray-500 text-sm">
                     <div className="flex items-center">
-                        <button className="flex items-center" onClick={handleLikeClick}>
-                            <button
-                                className="focus:outline-none flex items-center justify-center w-4 h-4 rounded-full bg-primary">
+                        <button className="flex items-center focus:outline-none flex items-center justify-center w-4 h-4 rounded-full bg-primary" onClick={handleLikeClick}>
                                 Like
-                            </button>
                             <div className="ml-1"><p>
                                 {props.likeList.length > 0 ? props.likeList.length : null}
                             </p></div>
                         </button>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <button>{props.commentList.length > 0 ? props.commentList.length : null} Comments</button>
+                        <button onClick={handleCommentClick}>{props.commentList.length > 0 ? props.commentList.length : null} Comments</button>
                     </div>
                 </div>
             </div>
@@ -114,15 +113,18 @@ function Post(props) {
                     <div>
                         <div className="relative">
                             <input placeholder="Write a comment..."
-                                   className="pt-2 pb-2 pl-3 w-full h-11 bg-slate-100 rounded-lg font-medium pr-20"></input>
-                            <button className="flex absolute right-3 top-2/4 -mt-3 items-center">
+                                   className="pt-2 pb-2 pl-3 w-full h-11 bg-slate-100 rounded-lg font-medium pr-20"
+                                   value={commentContent}
+                            onChange={handleCommentContentChange}/>
+                            <button className="flex absolute right-3 top-2/4 -mt-3 items-center" disabled={sendButtonDisable} onClick={sendComment}>
                                 <RiSendPlane2Fill/>
                             </button>
                         </div>
                     </div>
 
                     {props.commentList.map((commentItem) => (
-                        <div className="pt-6">
+                        <div className="pt-6" key={commentItem.id}>
+                            {console.log(commentItem.id)}
                             <div className="flex pb-4">
                                 <a className="mr-4" href="">
                                     <img className="rounded-full max-w-none w-12 h-12"

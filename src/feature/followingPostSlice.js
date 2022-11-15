@@ -5,6 +5,7 @@ const initialState = {
     followingPosts: null,
 };
 
+
 export const getFollowingPosts = createAsyncThunk(
     "http://localhost:8765/api/followingPosts",
     async () =>{
@@ -25,14 +26,14 @@ export const getFollowingPosts = createAsyncThunk(
 async function insertComment(postId, commentContent) {
     const response = await axios({
         method: "post",
-        url: "http://localhost:8765/api/insertcomment",
+        url: "http://localhost:8765/api/insertComment",
         headers: {
             Authorization: localStorage.getItem("Token"),
         },
         data: {
             commentEntity: {
                 userId: localStorage.getItem("UserId"),
-                userFullname: localStorage.getItem("UserFirstName") + " " + localStorage.getItem("UserLastName"),
+                UserName: localStorage.getItem("UserName"),
                 content: commentContent,
             },
             postId: {
@@ -80,6 +81,7 @@ export const followingPostSlice = createSlice({
     initialState,
     reducers: {
         addLike: (state, action) => {
+            debugger
             if (state.followingPosts !== null) {
                 for (let i = 0; i < state.followingPosts.length; i++) {
                     if (state.followingPosts[i].post.id === action.payload.postId) {
@@ -87,7 +89,8 @@ export const followingPostSlice = createSlice({
                             state.followingPosts[i].post.Like.push(action.payload.userId);
                             updateLike(action.payload.postId, action.payload.userId);
                         } else {
-                            state.followingPosts[i].post.Like = state.followingPosts[i].post.Like.filter(item => item !== action.payload.userId);
+                            state.followingPosts[i].post.Like = state.followingPosts[i].post.Like
+                                .filter(item => item !== action.payload.userId);
                             updateLike(action.payload.postId, action.payload.userId);
                         }
                     }
