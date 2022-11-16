@@ -6,8 +6,6 @@ export default function Signup() {
     return (
         <>
             <Layout>
-
-
                 <div className="w-auto space-y-8 shadow-2xl p-12 bg-white">
                     <Header
                         heading="Signup to create an account"
@@ -16,7 +14,6 @@ export default function Signup() {
                         linkUrl="/Signin"
                     />
                     <Register/>
-
                 </div>
             </Layout>
         </>

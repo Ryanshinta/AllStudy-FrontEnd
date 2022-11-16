@@ -3,6 +3,7 @@ import React, {useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Form, Button} from 'semantic-ui-react';
 import {useNavigate} from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
     const [firstname, setFirstname] = useState('');
@@ -16,39 +17,36 @@ const Signup = () => {
     const navigate = useNavigate();
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
     const password = useRef({});
+    const userEmail = useRef({});
     password.current = watch("password", "");
 
     const onSubmit = (data) => {
         console.log(data);
-
-        // navigate('/Signin');
+        addUser(data);
     }
 
-    const jsonData = {
-        "users": [
-            {
-                "name": "alan",
-                "age": 23,
-                "username": "aturing"
+    const addUser = async (data) => {
+        const response = await axios({
+            method: "POST",
+            url: "http://localhost:8765/api/users/save",
+            data: {
+                email:data.email,
+                phone:data.phone,
+                gender:data.gender,
+                firstName:data.firstName,
+                lastName:data.lastName,
+                password:data.password,
+                role:"USER"
             },
-            {
-                "name": "john",
-                "age": 29,
-                "username": "__john__"
-            }
-        ]
-    };
+        });
+        if (response.data !== null && response.data.status === "fail") {
+            console.log("failed")
+        }
 
-    function handleClick() {
-
-        // Send data to the backend via POST
-        fetch('http://localhost:8765/api/users/register', {  // Enter your IP address here
-            method: 'POST',
-            mode: 'cors',
-            body: JSON.stringify(jsonData) // body data type must match "Content-Type" header
-
-        }).then(r => false)
-
+        if (response.data !== null && response.data.status === "success"){
+            console.log("success")
+            // navigate("/Dashboar");
+        }
     }
 
     return (
@@ -224,14 +222,6 @@ const Signup = () => {
                 <Button type='submit'
                         className="w-full focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Signup</Button>
             </Form>
-            <button onClick={handleClick} style={{
-                textAlign: 'center',
-                width: '100px',
-                border: '1px solid gray',
-                borderRadius: '5px'
-            }}>
-                Send data to backend
-            </button>
         </div>
     )
 }
