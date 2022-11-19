@@ -27,8 +27,8 @@ function HomePage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (localStorage.getItem("token") !== null) {
-            navigate("/newsfeed");
+        if (localStorage.getItem("Token") !== null) {
+            navigate("/Community");
         }
     });
 

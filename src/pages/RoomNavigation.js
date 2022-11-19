@@ -56,26 +56,7 @@ export default function RoomNavigation(){
     return(
         <>
             <Layout>
-                <section>
-                    {/*<div className="mt-8 flex items-center space-x-2 st-onboarding-dashboard-step-1">*/}
-                    {/*    <h3 className="text-lg font-bold leading-[24px] text-gray-300">Solo Study Room</h3>*/}
-                    {/*</div>*/}
-                    {/*<div className="mt-5">*/}
-                    {/*    <div className="relative overflow-hidden rounded-2xl bg-white p-4 transition-all duration-300 ease-in-out">*/}
-                    {/*        <div className="relative space-y-3">*/}
-                    {/*            <div className="flex items-center space-x-2 justify-between">*/}
-                    {/*                <div className="text-lg font-bold">Solo Study Room</div>*/}
-
-                    {/*            </div>*/}
-                    {/*            <div className="text-sm">*/}
-                    {/*                <div><strong className="font-bold">100% focus?</strong> Set the scene with*/}
-                    {/*                    atmospheric backgrounds, use timer and goal setting and study in your solo study*/}
-                    {/*                    room.*/}
-                    {/*                </div>*/}
-                    {/*            </div>*/}
-                    {/*        </div>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
+                <div>
                     <div className="mt-8 flex items-center space-x-2 st-onboarding-dashboard-step-2"><h3
                         className="text-lg font-bold leading-[24px] text-gray-300">AllStudy Rooms</h3>
                         <NewRoom /></div>
@@ -143,8 +124,7 @@ export default function RoomNavigation(){
                             </div>
                         ))}
                     </div>
-
-                </section>
+                </div>
             </Layout>
         </>
     )

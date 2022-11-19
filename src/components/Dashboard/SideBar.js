@@ -14,7 +14,7 @@ export default function SideBar() {
 
     const Menus = [
         { title: 'Dashboard', path: '/', src: <BiBarChartAlt2 /> },
-        { title: 'Study Room', path: '/StudyRoom', src: <BiVideo /> },
+        { title: 'Study Room', path: '/RoomNavigation', src: <BiVideo /> },
         { title: 'Chat Room', path: '/Chat', src: <BiChat /> },
         { title: 'Study Partner', path: '/Partner', src: <BiUserPlus /> },
         { title: 'Community', path: '/', src: <BiCompass /> },
