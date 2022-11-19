@@ -55,8 +55,8 @@ function Post(props) {
             addComment({
                 postId: postId,
                 newComment:{
-                    userId: localStorage.getItem("UserId"),
-                    UserName: localStorage.getItem("UserName"),
+                    userId: localStorage.getItem("UserID"),
+                    userName: localStorage.getItem("UserName"),
                     content: commentContent,
                 },
             })
@@ -73,7 +73,7 @@ function Post(props) {
                                                 className="w-full h-full rounded-full"
                                                 alt="dp"/></div>
                 <div className="flex-grow flex flex-col"><p
-                    className="font-semibold text-sm text-gray-700">{props.name}
+                    className="font-semibold text-sm text-gray-700">{props.userName}
                 </p><span
                     className="text-xs font-thin text-gray-400">{timeAgo.format(new Date(props.postDate).getTime())}</span>
                 </div>
@@ -124,15 +124,15 @@ function Post(props) {
 
                     {props.commentList.map((commentItem) => (
                         <div className="pt-6" key={commentItem.id}>
-                            {console.log(commentItem.id)}
+                            {console.log(commentItem)}
                             <div className="flex pb-4">
                                 <a className="mr-4" href="">
                                     <img className="rounded-full max-w-none w-12 h-12"
                                          src="https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg"/>
                                 </a>
                                 <div>
-                                    <a className="ifont-semibold text-sm text-gray-700 mr-2"
-                                       href="#">{commentItem.UserName}</a>
+                                    <a className="font-semibold text-sm text-gray-700 mr-2"
+                                       href="#">{commentItem.userName}</a>
                                     <span className="text-xs font-thin text-gray-400">{commentItem.date}</span>
                                     <div className="mb-1">
                                         <p className="text-gray-700 max-h-10 truncate px-3 text-sm">

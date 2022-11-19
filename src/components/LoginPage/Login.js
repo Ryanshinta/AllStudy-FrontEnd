@@ -1,6 +1,3 @@
-import * as yup from "yup";
-import {loginFields} from "../../constants/formFields";
-import { toast, ToastContainer } from "react-toastify";
 
 import React, {useRef, useState} from "react";
 import {useForm} from "react-hook-form";
@@ -42,11 +39,12 @@ const SignIn = () => {
         }
 
         if (response.data !== null && response.data.status === "success"){
+            console.log(response);
             console.log("success login")
             localStorage.setItem("UserID",response.data.payload.user.id);
-            localStorage.setItem("UserName",response.data.payload.user.Name);
+            localStorage.setItem("UserName",response.data.payload.user.firstName + " " + response.data.payload.user.lastName);
             localStorage.setItem("UserEmail",response.data.payload.user.email);
-            localStorage.setItem("Token",response.data.payload.user.token);
+            localStorage.setItem("Token",response.data.payload.token);
             navigate("/Profile");
         }
     }

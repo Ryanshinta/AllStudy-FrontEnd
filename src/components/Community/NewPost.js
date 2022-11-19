@@ -73,6 +73,7 @@ function NewPost() {
                 data: {
                     id: null,
                     userId: localStorage.getItem("UserID"),
+                    userName: localStorage.getItem("UserName"),
                     content: inputContent,
                     image: file64StringWithType,
                     createdAt: null,
