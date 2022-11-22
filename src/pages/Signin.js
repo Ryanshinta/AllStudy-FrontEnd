@@ -7,7 +7,7 @@ export default function SignIn() {
     return (
         <>
             <Layout>
-                <div className="max-w-md w-full space-y-8 shadow-2xl p-12 bg-white">
+                <div className="max-w-md w-full space-y-8 shadow-2xl p-12 bg-white justify-center justify-items-center">
                     <Header
                         heading="Login to your account"
                         paragraph="Don't have an account yet? "

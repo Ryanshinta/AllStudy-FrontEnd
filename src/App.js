@@ -13,6 +13,7 @@ import Community from "./pages/Community";
 import HomePage from "./pages/HomePage";
 
 import './App.css';
+import VideoRoom from "./pages/VideoRoom";
 function App() {
     return (
         <div>
@@ -27,6 +28,9 @@ function App() {
                         <Route path="/Partner" element={<Partner/>} />
                         <Route path="/Chat" element={<Chat/>} />
                         <Route path="/RoomNavigation" element={<RoomNavigation/>} />
+                        <Route path="/videoRoom" element={<VideoRoom/>} >
+                            <Route path='/videoRoom/:sessionId' element={<VideoRoom/>} />
+                        </Route>
                         <Route path="/Room" element={<Room/>} />
                         <Route path="/Community" element={<Community/>} />
                     </Routes>
