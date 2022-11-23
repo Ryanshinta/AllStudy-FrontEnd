@@ -4,6 +4,7 @@ import React from "react";
 import SideBar from "./SideBar";
 import TopBar from "./TopBar";
 import Background from "./Background";
+import TodoList from "../../pages/TodoList";
 
 
 const Layout = ({ children }) => {
@@ -16,6 +17,10 @@ const Layout = ({ children }) => {
                 <div className="grow md:flex-grow">
                     <div className="m-5">
                         {children}
+                        <div className={"fixed top-100 right-3"}>
+                            <TodoList/>
+                        </div>
+
                     </div>
                 </div>
             </div>

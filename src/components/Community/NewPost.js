@@ -167,7 +167,14 @@ function NewPost() {
                             </input>
                         </div>
                         <div className="flex space-x-3 font-thin text-sm text-gray-600 -mb-1">
-                            <input type="file" accept="image/*" multiple onChange={onUploadFileChange} />Photo
+                            <input className={
+                                "file:mr-4 file:py-2 file:px-4\n" +
+                                "      file:rounded-full file:border-0\n" +
+                                "      file:text-sm file:font-semibold\n" +
+                                "      file:bg-violet-50 file:text-violet-700\n" +
+                                "      hover:file:bg-violet-100"
+                            } type="file" id={"file"} accept="image/*" multiple onChange={onUploadFileChange} />
+                            <label htmlFor={"file"}></label>
 
                             {/*<Button className="flex-1 flex items-center h-8 focus:outline-none focus:bg-gray-200 justify-center space-x-2 hover:bg-gray-100 rounded-md">*/}
                             {/*    <div><i className="far fa-smile text-yellow-500"></i></div>*/}

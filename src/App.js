@@ -14,6 +14,7 @@ import HomePage from "./pages/HomePage";
 
 import './App.css';
 import VideoRoom from "./pages/VideoRoom";
+import TodoList from "./pages/TodoList";
 function App() {
     return (
         <div>
@@ -33,6 +34,7 @@ function App() {
                         </Route>
                         <Route path="/Room" element={<Room/>} />
                         <Route path="/Community" element={<Community/>} />
+                        <Route path="/TodoList" element={<TodoList/>} />
                     </Routes>
                 </HashRouter>
             </div>

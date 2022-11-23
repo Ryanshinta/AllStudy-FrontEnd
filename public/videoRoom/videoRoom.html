@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="openvidu-webcomponent-2.24.0.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+            crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(async ()=>{
+            const webComponent = document.querySelector('openvidu-webcomponent');
+            console.log(webComponent);
+            webComponent.addEventListener('onSessionCreated', (event) =>{
+                const session = event.detail;
+                session.on('connectionCreated', (e) => {
+                    console.log("connectionCreated", e);
+                });
+
+                session.on('streamDestroyed', (e) => {
+                    console.log("streamDestroyed", e);
+                });
+
+                session.on('streamCreated', (e) => {
+                    console.log("streamCreated", e);
+                });
+
+                session.on('sessionDisconnected', (event) => {
+                    console.warn("sessionDisconnected event");
+                    webComponent.style.display = 'none';
+                });
+
+                session.on('exception', (exception) => {
+                    console.error(exception);
+                });
+            });
+
+            webComponent.addEventListener('onJoinButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarLeaveButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarCameraButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarMicrophoneButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarScreenshareButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarParticipantsPanelButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarChatPanelButtonClicked', (event) => { });
+            webComponent.addEventListener('onToolbarFullscreenButtonClicked', (event) => { });
+            webComponent.addEventListener('onParticipantCreated', (event) => { });
+
+             joinSession();
+        })
+
+        async function joinSession() {
+            const sessionId = localStorage.getItem("SessionID");
+            const participantName = localStorage.getItem("UserName");
+
+            console.warn('SESSION ID', sessionId);
+
+            const promiseResults = await Promise.all([getToken(sessionId), getToken(sessionId)]);
+
+            console.warn('promiseResults', promiseResults);
+
+            const tokens = {webcam: promiseResults[0], screen: promiseResults[1]};
+
+            const webComponent = document.querySelector('openvidu-webcomponent');
+
+            //const main = document.getElementById("main");
+            //main.style.display = 'none';
+
+            webComponent.toolbarDisplayLogo = false;
+
+            webComponent.style.display = 'block';
+            webComponent.participantName = participantName;
+
+            webComponent.tokens = tokens;
+        }
+
+
+        /*
+         *    Connection with Backend Server
+         *
+          */
+
+        async function getToken(sessionId) {
+            //const id = await createSession(sessionId);
+            return createToken(sessionId);
+
+        }
+
+        async function createToken(sessionId) {
+            console.log("Start createToken " + sessionId)
+            const config = {
+                method: 'post',
+                url: 'http://localhost:8765/api/sessions/' + sessionId + '/connections',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization:localStorage.getItem("Token"),
+                }
+            };
+            const res = await axios(config)
+            return res.data
+        }
+
+
+
+
+
+    </script>
+    <link rel="stylesheet" href="openvidu-webcomponent-2.24.0.css">
+</head>
+<body>
+<!--<input id="main" type="button" value="Join" onclick="joinSession();" />-->
+<openvidu-webcomponent style="height: 100%;"></openvidu-webcomponent>
+</body>
+</html>

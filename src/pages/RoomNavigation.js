@@ -70,7 +70,8 @@ export default function RoomNavigation() {
                         {PublicRoom.map((Room, index) => (
 
                             <div
-                                className="relative flex flex-col overflow-hidden rounded-2xl bg-white text-gray-600 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lg">
+                                className="relative flex flex-col overflow-hidden rounded-2xl bg-white text-gray-600 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lg"
+                            key={index}>
                                 <div className="flex justify-center flex-col space-y-2 p-4">
                                     {Room.title}
                                 </div>
@@ -96,19 +97,21 @@ export default function RoomNavigation() {
                     </div>
 
 
-                    <div className="mt-5 mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="mt-5 mb-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3" >
 
                         {
                             allRoom !== null ?(
                                 allRoom?.map((room)=>{
 
                                     return(
+                                        <div key={room.sessionID}>
                                         <RoomCard
                                             title={room.roomName}
                                             userName={"tester"}
                                             Desc={room.roomDesc}
                                             sessionID={room.sessionID}
                                         />
+                                        </div>
                                         )
 
                                 })

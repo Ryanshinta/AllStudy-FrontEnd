@@ -6,7 +6,8 @@ function RoomCard(props) {
 
 
     function handleRoomJoinClick() {
-
+        localStorage.setItem("SessionID",props.sessionID);
+        window.location.href="/videoRoom/videoRoom.html";
     }
 
     return(
@@ -16,11 +17,18 @@ function RoomCard(props) {
                 {props.title}
             </div>
 
-            <div className="p-4">
-                {props.userName}
+            <div className={"flex"}>
+                <a className="ml-4">
+                    <img className="rounded-full max-w-none w-5 h-5"
+                         src="https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg"/>
+                </a>
+                <div className="ml-2">
+                    {props.userName}
+                </div>
             </div>
 
-            <div className="m-1 flex grow flex-col capitalize bg-slate-300 rounded-xl">
+
+            <div className="m-2 flex grow flex-col capitalize bg-slate-300 rounded-xl">
                 <p className="text-sm line-clamp-2 p-2">{props.Desc}</p>
             </div>
 

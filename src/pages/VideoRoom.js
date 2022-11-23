@@ -1,8 +1,8 @@
 import {useNavigate, useParams} from "react-router-dom";
-import "../components/VideoRoom/openvidu/openvidu-webcomponent-2.24.0"
-import "../components/VideoRoom/openvidu/openvidu-webcomponent-2.24.0.css"
-import "../components/VideoRoom/openvidu/openvidu-browser-2.24.0"
-import {useEffect} from "react";
+// import "../components/VideoRoom/openvidu/openvidu-webcomponent-2.24.0"
+// import "../components/VideoRoom/openvidu/openvidu-webcomponent-2.24.0.css"
+// //import "../components/VideoRoom/openvidu/openvidu-browser-2.24.0"
+import {useEffect, useState} from "react";
 import axios from "axios";
 
 
@@ -11,9 +11,11 @@ function VideoRoom(e) {
     const params = useParams();
     const sessionId = params.sessionId;
     const navigate = useNavigate();
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     useEffect(() =>{
         const webComponent = document.querySelector('openvidu-webcomponent');
+
         console.log(webComponent);
 
         webComponent.addEventListener('onSessionCreated', (event) =>{
@@ -50,6 +52,15 @@ function VideoRoom(e) {
         webComponent.addEventListener('onToolbarChatPanelButtonClicked', (event) => { });
         webComponent.addEventListener('onToolbarFullscreenButtonClicked', (event) => { });
         webComponent.addEventListener('onParticipantCreated', (event) => { });
+
+        function onFullscreenChange() {
+            setIsFullscreen(Boolean(document.fullscreenElement));
+        }
+
+        document.addEventListener('fullscreenchange', onFullscreenChange);
+        return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+
+
         joinSession()
     },[]);
 
@@ -68,7 +79,15 @@ function VideoRoom(e) {
 
         const webComponent = document.querySelector('openvidu-webcomponent');
 
+
+
+
         webComponent.style.display = 'block';
+        webComponent.style.height = '100%';
+        webComponent.style.width = '100%';
+        //webComponent.style;
+        webComponent.toolbarFullscreenButton = true;
+        webComponent.toolbarDisplayLogo = false;
         webComponent.tokens = tokens;
     }
 
@@ -81,7 +100,7 @@ function VideoRoom(e) {
     */
 
     async function getToken(sessionId) {
-        const id = await createSession(sessionId);
+        //const id = await createSession(sessionId);
         return createToken(sessionId);
 
     }
@@ -100,38 +119,47 @@ function VideoRoom(e) {
         return res.data
     }
 
-    function createSession(sessionId) {
-        console.log("createSession ",sessionId)
-        const data = JSON.stringify({
-            "customSessionId": sessionId
-        });
-
-        const config = {
-            method: 'post',
-            url: 'http://localhost:8765/api/session',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization:localStorage.getItem("Token"),
-            },
-            data: data
-        };
-
-        axios(config)
-            .then(function (response) {
-                console.log(response.data);
-                return response.data
-            })
-            .catch(function (error) {
-                console.log(error);
-            });
-
-    }
+    // function createSession(sessionId,random) {
+    //     let data;
+    //     if (random){
+    //         data = {
+    //             "roomName": "inputRoomName",
+    //             "roomDesc": "inputDesc",
+    //         }
+    //     }else {
+    //         data = JSON.stringify({
+    //             "sessionId":sessionId,
+    //             "roomName": "inputRoomName",
+    //             "roomDesc": "inputDesc",
+    //         });
+    //         console.log("createSession ",sessionId)
+    //     }
+    //
+    //     const config = {
+    //         method: 'post',
+    //         url: 'http://localhost:8765/api/session',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             Authorization:localStorage.getItem("Token"),
+    //         },
+    //         data: data
+    //     };
+    //     axios(config)
+    //         .then(function (response) {
+    //             console.log(response.data);
+    //             return response.data
+    //         })
+    //         .catch(function (error) {
+    //             console.log(error);
+    //         });
+    //
+    // }
 
 
 
 
         return (
-                <openvidu-webcomponent style={{height:"100%"}}></openvidu-webcomponent>
+            <openvidu-webcomponent />
         )
 
 }
