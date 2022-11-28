@@ -28,7 +28,7 @@ export default function SideBar() {
         { title: 'Chat Room', path: '/Chat', src: <BiChat /> },
         { title: 'Study Partner', path: '/Partner', src: <BiUserPlus /> },
         { title: 'Community', path: '/', src: <BiCompass /> },
-        { title: 'To-Do List', path: '/', src: <BiNotepad /> },
+        { title: 'To-Do List', path: '/TodoList', src: <BiNotepad /> },
         { title: 'My Profile', path: '/Profile', src: <CgProfile />, gap: 'true' },
         // { title: 'Sign In', path: '/', src: <BiLogInCircle />},
         //{ title: 'Sign Out', path: '/', src: <BiLogOutCircle />},

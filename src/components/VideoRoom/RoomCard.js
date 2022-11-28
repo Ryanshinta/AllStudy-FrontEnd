@@ -1,13 +1,28 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
+import IosShareIcon from '@mui/icons-material/IosShare';
+import {Box, ClickAwayListener, IconButton, Tooltip} from "@mui/material";
+import {IconBase} from "react-icons";
+import {useState} from "react";
 
 
 function RoomCard(props) {
-
+    const [open, setOpen] = useState(false);
 
     function handleRoomJoinClick() {
-        localStorage.setItem("SessionID",props.sessionID);
-        window.location.href="/videoRoom/videoRoom.html";
+        //localStorage.setItem("SessionID",props.sessionID);
+        window.location.href="/videoRoom/videoRoom.html?SessionID="+props.sessionID;
+    }
+
+    function handleShareRoom() {
+        const url =  window.location.host;
+        const path = "/videoRoom/videoRoom.html?SessionID="+props.sessionID;
+        navigator.clipboard.writeText("Come and join me together! "+url+path);
+        setOpen((prev) => !prev);
+    }
+
+    function handleClickAway() {
+        setOpen(false);
     }
 
     return(
@@ -34,7 +49,13 @@ function RoomCard(props) {
 
             <div className="gap-2 px-4 pb-4">
                 {props.sessionID}
+                <Tooltip title={"Click to Share"}>
+                    <IconButton onClick={handleShareRoom}>
+                        <IosShareIcon/>
+                    </IconButton>
+                </Tooltip>
             </div>
+
             <div className="absolute bottom-0 right-0 gap-2 px-4 pb-4">
                 <div className="btn btn-md group bg-primary px-2.5 pr-4 text-white ">
                     <Button variant="contained" color="primary"

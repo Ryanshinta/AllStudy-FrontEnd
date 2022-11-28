@@ -49,7 +49,11 @@
         })
 
         async function joinSession() {
-            const sessionId = localStorage.getItem("SessionID");
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+
+            //const sessionId = localStorage.getItem("SessionID");
+            const sessionId = urlParams.get("SessionID");
             const participantName = localStorage.getItem("UserName");
 
             console.warn('SESSION ID', sessionId);

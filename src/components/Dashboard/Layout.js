@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
                     <div className="m-5">
                         {children}
                         <div className={"fixed top-100 right-3"}>
-                            <TodoList/>
+                            {/*<TodoList/>*/}
                         </div>
 
                     </div>
