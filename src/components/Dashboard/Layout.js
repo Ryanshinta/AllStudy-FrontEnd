@@ -8,25 +8,19 @@ import Background from "./Background";
 
 const Layout = ({ children }) => {
     return (
-        <div>
         <Background>
-        <div className='dark:bg-gray-800'>
-            <div className="flex flex-auto">
-
-                <div className="fixed">
+            <div>
+                <div className="flex flex-auto">
                     <SideBar />
-                </div>
-
-                <div className="grow md:flex-grow">
-                    {/* <TopBar/> */}
-                    <div className="m-0">
-                        {children}
+                    <div className="grow md:flex-grow">
+                        {/* <TopBar/> */}
+                        <div className="m-0">
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
         </Background>
-        </div>
     )
 }
 

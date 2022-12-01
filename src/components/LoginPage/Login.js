@@ -1,12 +1,14 @@
 import * as yup from "yup";
-import {loginFields} from "../../constants/formFields";
-import { toast, ToastContainer } from "react-toastify";
+// import {loginFields} from "../../constants/formFields";
+// import { toast, ToastContainer } from "react-toastify";
 
 import React, {useRef, useState} from "react";
 import {useForm} from "react-hook-form";
 import {Form, Button} from 'semantic-ui-react';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import { getDatabase, ref, onValue} from "firebase/compat/database";
+import firebase from "../../firebase";
 
 const SignIn = () => {
     const [email, setEmail] = useState('');
@@ -19,13 +21,32 @@ const SignIn = () => {
     password.current = watch("password", "");
 
     const onSubmit = (data) => {
-        console.log(data);
+        localStorage.setItem("UserPassword", data.password);
         authenticateUser(data);
     }
 
     const authenticateUser = (values) =>{
         //console.log("Login")
         postSignInInfo(values);
+    }
+
+    const  writeUserData = (id, email, name)  => {
+        firebase.database().ref('profiles/' + id).on('value', snapshot => {
+            if (snapshot.exists()){
+                console.log("already existed in firebase");
+            }else {
+                const newProfile = firebase.database().ref('profiles/' + id);
+                newProfile.set({
+                    id: id,
+                    username: name,
+                    email: email
+                });
+            }
+        });
+        // firebase.database().ref(`profiles/`).on('value', snapshot => {
+        //     let responselist = Object.values(snapshot.val())
+        //     console.log(snapshot.val())
+        // });
     }
 
     async function postSignInInfo(inputData){
@@ -44,32 +65,11 @@ const SignIn = () => {
         if (response.data !== null && response.data.status === "success"){
             console.log("success login")
             localStorage.setItem("UserID",response.data.payload.user.id);
-            localStorage.setItem("UserName",response.data.payload.user.Name);
+            localStorage.setItem("UserName",response.data.payload.user.lastName + " " + response.data.payload.user.firstName);
             localStorage.setItem("UserEmail",response.data.payload.user.email);
-            localStorage.setItem("Token",response.data.payload.user.token);
+            localStorage.setItem("Token",response.data.payload.token);
+            writeUserData(localStorage.getItem("UserID"), localStorage.getItem("UserEmail"), localStorage.getItem("UserName"));
             navigate("/Profile");
-        }
-    }
-
-    const addUser = async (data) => {
-        const response = await axios({
-            method: "POST",
-            url: "http://localhost:8765/api/users/save",
-            data: {
-                email:data.email,
-                firstName:data.firstName,
-                lastName:data.lastName,
-                password:data.password,
-                role:"USER"
-            },
-        });
-        if (response.data !== null && response.data.status === "fail") {
-            console.log("failed")
-        }
-
-        if (response.data !== null && response.data.status === "success"){
-            console.log("success")
-            // navigate("/Dashboar");
         }
     }
 

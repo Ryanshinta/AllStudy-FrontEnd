@@ -1,8 +1,8 @@
-import React from "react";
-import {Link, useLocation} from "react-router-dom";
+import React, {useState} from "react";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import {AiFillPieChart, AiOutlineArrowLeft} from "react-icons/ai";
 import {SiFuturelearn, SiOpenaccess} from "react-icons/si";
-import {BiVideo, BiChat, BiBarChartAlt2, BiUserPlus, BiNotepad, BiCompass, BiLogInCircle, BiLogOutCircle} from "react-icons/bi";
+import {BiVideo, BiChat, BiBarChartAlt2, BiUserPlus, BiNotepad, BiCompass, BiLogInCircle, BiLogOutCircle, BiLock} from "react-icons/bi";
 import {BsPeople} from "react-icons/bs";
 import {CgProfile} from "react-icons/cg";
 
@@ -10,18 +10,29 @@ import {CgProfile} from "react-icons/cg";
 export default function SideBar() {
 
     const location = useLocation();
+    const [isLogin,setIsLogin] = useState(false)
     const [open, setOpen] = React.useState(false);
+    let navigate = useNavigate();
+
+    function handleSignOut(e) {
+        localStorage.removeItem("UserID");
+        localStorage.removeItem("Token");
+        localStorage.removeItem("UserName");
+        localStorage.removeItem("UserEmail");
+        navigate("/");
+    }
 
     const Menus = [
         { title: 'Dashboard', path: '/', src: <BiBarChartAlt2 /> },
-        { title: 'Study Room', path: '/StudyRoom', src: <BiVideo /> },
-        { title: 'Chat Room', path: '/Chat', src: <BiChat /> },
+        { title: 'Study Room', path: '/RoomNavigation', src: <BiVideo /> },
+        { title: 'Public Chat', path: '/PublicChat', src: <BiChat /> },
+        { title: 'Private Chat', path: '/PrivateChat', src: <BiLock /> },
         { title: 'Study Partner', path: '/Partner', src: <BiUserPlus /> },
         { title: 'Community', path: '/', src: <BiCompass /> },
-        { title: 'To-Do List', path: '/', src: <BiNotepad /> },
+        { title: 'To-Do List', path: '/TodoList', src: <BiNotepad /> },
         { title: 'My Profile', path: '/Profile', src: <CgProfile />, gap: 'true' },
-        { title: 'Sign In', path: '/', src: <BiLogInCircle />},
-        { title: 'Sign Out', path: '/', src: <BiLogOutCircle />},
+        // { title: 'Sign In', path: '/', src: <BiLogInCircle />},
+        //{ title: 'Sign Out', path: '/', src: <BiLogOutCircle />},
     ]
 
 
@@ -65,6 +76,17 @@ export default function SideBar() {
                             </li>
                         </Link>
                     ))}
+
+                    <div onClick={handleSignOut}>
+                        <li className="flex items-center gap-x-6 p-3 text-base font-normal rounded-lg cursor-pointer dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 mt-2">
+                            <span className='text-2xl'><BiLogOutCircle /></span>
+                            <span className={`${
+                                !open && 'hidden'
+                            } origin-left duration-300 hover:block`}>
+                                Sign Out
+                            </span>
+                        </li>
+                    </div>
 
                 </ul>
 

@@ -71,7 +71,7 @@ export default function Community() {
                                                     key={post.post.id}
                                                     postId={post.post.id}
                                                     userId={post.user.id}
-                                                    UserName={post.user.UserName}
+                                                    userName={post.post.userName}
                                                     content={post.post.content}
                                                     image={post.post.image}
                                                     likeList={post.post.like}
