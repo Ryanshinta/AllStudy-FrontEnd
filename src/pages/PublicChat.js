@@ -1,8 +1,7 @@
 import Layout from "../components/Dashboard/Layout";
-import PublicChatRoom from "../components/PublicChatRoom/PublicChatRoom.js";
-import '../index.css';
+import PublicChatRoom from "../components/PublicChatRoom/PublicChatRoom";
 
-export default function PrivateChat(){
+export default function PublicChat(){
     return(
         <>
             <Layout>

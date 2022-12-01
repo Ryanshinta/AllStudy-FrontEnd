@@ -9,12 +9,14 @@ import firebase from "../../firebase";
 const PublicChatRoom = () => {
     const [roomName, setRoomName] = useState('');
     const [rooms, setRooms] = useState([]);
+    const [searchRooms, setSearchRooms] = useState([]);
     const [roomUsers, setRoomUsers] = useState([]);
     const [chat, setChat] = useState('');
     const [chats, setChats] = useState([]);
     const input = useRef(null);
     const endMessage = useRef(null);
     const [exitRoom, setExitRoom] = useState('');
+    const [showSearch, setShowSearch] = useState(false);
     const [joinRoom, setJoinRoom] = useState(false);
     const [showConversation, setShowConversation] = useState(false);
 
@@ -36,6 +38,17 @@ const PublicChatRoom = () => {
             });
         }
     }
+
+    const searchPublicRoom = (keyword) => {
+        const findRoom = async () => {
+            firebase.database().ref('rooms').orderByChild("roomname").startAt(keyword).endAt(keyword + "\uf8ff").on('value', resp => {
+                setSearchRooms([]);
+                setSearchRooms(snapshotToArray(resp));
+            })
+        };
+        findRoom();
+        setShowSearch(true);
+    };
 
     const showJoinRoomMsg = (roomname) => {
         setRoomName(roomname);
@@ -134,7 +147,7 @@ const PublicChatRoom = () => {
 
     useEffect(() => {
         const readPublicRoom = async () => {
-            firebase.database().ref('rooms/').on('value', resp => {
+            firebase.database().ref('roomusers/').orderByChild('username').equalTo(localStorage.getItem("UserName")).on('value', resp => {
                 setRooms([]);
                 setRooms(snapshotToArray(resp));
             });
@@ -214,15 +227,66 @@ const PublicChatRoom = () => {
                                                     className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                                     onChange={event => setRoomName(event.target.value)}
                                                 />
+                                                <Button
+                                                    onClick={() => {
+                                                        searchPublicRoom(roomName)
+                                                    }}
+                                                    className="absolute text-white block right-20 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                    Search
+                                                </Button>
                                                 <Button onClick={() => {
                                                     newPublicRoom(roomName)
                                                 }}
-                                                        className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">New
-                                                    Room
+                                                        className="absolute text-white right-2.5 block bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                    Add
                                                 </Button>
                                             </div>
                                         </div>
                                         <div>
+                                            {showSearch === true ? (
+                                                <div>
+                                                    <div className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                        <div className="flex items-bottom justify-between">
+                                                            <p className="text-grey-darkest">
+                                                                Room Search - {searchRooms.length}
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                    {searchRooms.map((room, index) => {
+                                                        return (
+                                                            <div key={index}
+                                                                 onClick={() => {
+                                                                     showJoinRoomMsg(room.roomname)
+                                                                 }}
+                                                                 className="p-3 flex items-center bg-stone-200 hover:bg-stone-100 cursor-pointer">
+                                                                <div>
+                                                                    <img className="h-12 w-12 rounded-full"
+                                                                         src="https://www.famousbirthdays.com/headshots/russell-crowe-6.jpg"/>
+                                                                </div>
+                                                                <div
+                                                                    className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                                    <div className="flex items-bottom justify-between">
+                                                                        <p className="text-grey-darkest">
+                                                                            {room.roomname}
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            ) : (
+                                                <span></span>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <div className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                <div className="flex items-bottom justify-between">
+                                                    <p className="text-grey-darkest">
+                                                        Room Joined - {rooms.length}
+                                                    </p>
+                                                </div>
+                                            </div>
                                             {rooms.map((room, index) => {
                                                 return (
                                                     <div key={index}

@@ -1,6 +1,5 @@
 import Layout from "../components/Dashboard/Layout";
-import PrivateChatRoom from "../components/PrivateChatRoom/PrivateChatRoom.js";
-import '../index.css';
+import PrivateChatRoom from "../components/PrivateChatRoom/PrivateChatRoom"
 
 export default function PrivateChat(){
     return(
