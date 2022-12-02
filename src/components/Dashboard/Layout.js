@@ -9,7 +9,7 @@ import Background from "./Background";
 const Layout = ({ children }) => {
     return (
         <Background>
-            <div>
+            <div className={"dark:bg-gray-800"}>
                 <div className="flex flex-auto">
                     <SideBar />
                     <div className="grow md:flex-grow">
