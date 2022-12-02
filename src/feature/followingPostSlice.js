@@ -43,10 +43,10 @@ async function insertComment(postId, commentContent) {
     });
 }
 
-async function updateLike(postId, currentUserId) {
+async function updateLove(postId, currentUserId) {
     const response = await axios({
         method: "post",
-        url: "http://localhost:8765/api/Likepost",
+        url: "http://localhost:8765/api/likePost",
         headers: {
             Authorization: localStorage.getItem("Token"),
         },
@@ -58,6 +58,7 @@ async function updateLike(postId, currentUserId) {
 
     return response.data;
 }
+
 
 async function updateShare(postId, currentUserId) {
     const response = await axios({
@@ -75,24 +76,15 @@ async function updateShare(postId, currentUserId) {
     return response.data;
 }
 
-
 export const followingPostSlice = createSlice({
     name: "followingPostSlice",
     initialState,
     reducers: {
-        addLike: (state, action) => {
-            debugger
+        addLove: (state, action) => {
             if (state.followingPosts !== null) {
                 for (let i = 0; i < state.followingPosts.length; i++) {
-                    if (state.followingPosts[i].post.id === action.payload.postId) {
-                        if (!state.followingPosts[i].post.Like.includes(action.payload.userId)) {
-                            state.followingPosts[i].post.Like.push(action.payload.userId);
-                            updateLike(action.payload.postId, action.payload.userId);
-                        } else {
-                            state.followingPosts[i].post.Like = state.followingPosts[i].post.Like
-                                .filter(item => item !== action.payload.userId);
-                            updateLike(action.payload.postId, action.payload.userId);
-                        }
+                    if (state.followingPosts[i].post.id === action.payload.id) {
+                        updateLove(action.payload.postId, action.payload.userId);
                     }
                 }
             }
@@ -127,6 +119,6 @@ export const followingPostSlice = createSlice({
     },
 });
 
-
-export const {addLike, addShare, addComment} = followingPostSlice.actions;
+export const {addLove, addShare, addComment} = followingPostSlice.actions;
 export default followingPostSlice.reducer;
+

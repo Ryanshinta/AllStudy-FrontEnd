@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import {Checkbox, FormControlLabel} from "@mui/material";
+import {Checkbox, FormControlLabel, RadioGroup} from "@mui/material";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
@@ -19,6 +19,7 @@ function NewRoom(){
     const [inputRoomName, setInputRoomName] = useState();
     const [inputSessionId, setInputSessionId] = useState();
     const [inputDesc, setInputDesc] = useState();
+    const [password, setPassword] = useState();
 
 
     function handleDisableSessionBtn(){
@@ -33,7 +34,6 @@ function NewRoom(){
         setOpen(false);
     };
     const handleCreate = () => {
-
         if (disableSessionId){
             createSession("",true)
         }else {
@@ -48,6 +48,7 @@ function NewRoom(){
              data = {
                  "roomName": inputRoomName,
                  "roomDesc": inputDesc,
+                 "password": password,
              }
         }else {
              data = JSON.stringify({
@@ -92,6 +93,14 @@ function NewRoom(){
         setInputDesc(e.target.value);
     }
 
+    function disablePassword() {
+        return false;
+    }
+
+    function handlePasswordChange() {
+        return undefined;
+    }
+
     return(
         <div>
             <Button variant="contained" onClick={handleClickOpen}>
@@ -113,6 +122,16 @@ function NewRoom(){
                         value={inputRoomName}
                     />
                     <TextField
+                        id="password"
+                        label="Password"
+                        fullWidth
+                        variant="standard"
+                        disabled={disablePassword()}
+                        onChange={handlePasswordChange()}
+                        value={inputSessionId}
+
+                    />
+                    <TextField
                         id="sessionId"
                         label="Session ID"
                         fullWidth
@@ -123,6 +142,7 @@ function NewRoom(){
 
                     />
                     <FormControlLabel control={<Checkbox />} label="Random SessionID" onChange={handleDisableSessionBtn} />
+
                     <TextField
                         id="description"
                         label="Description"

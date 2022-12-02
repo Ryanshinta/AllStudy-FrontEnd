@@ -5,9 +5,10 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import {useDisclosure} from "./hooks/useDisclosure";
 import {useState} from "react";
 import {ModalInfosEventCalendar} from "./ModalInfosEventCalendar";
-import {toast} from "react-toastify";
+import {toast, ToastContainer} from "react-toastify";
 import {updateEventCalendar} from "./hooks/EventApi";
 import {IEventCalendar} from "./hooks/EventCalendar";
+import axios from "axios";
 
 
 type CalendarSchedulerProps = {
@@ -16,16 +17,16 @@ type CalendarSchedulerProps = {
 
 export default function Calendar(eventsCalendar:CalendarSchedulerProps){
     // console.log("eventsCalendar")
-    console.log(eventsCalendar.eventsCalendar.map(initEvent));
+    console.log(eventsCalendar);
 
-    function initEvent(eventsCalendar){
-        return[{
-            title: eventsCalendar.title,
-            start: eventsCalendar.start,
-            end: eventsCalendar.end,
-            titleEx: null
-        }]
-    }
+    // function initEvent(eventsCalendar){
+    //     return[{
+    //         title: eventsCalendar.title,
+    //         start: eventsCalendar.start,
+    //         end: eventsCalendar.end,
+    //         titleEx: null
+    //     }]
+    // }
 
     const [eventInfos, setEventInfos] = useState(null);
     const [isEditCard, setIsEditCard] = useState(false);
@@ -50,27 +51,51 @@ export default function Calendar(eventsCalendar:CalendarSchedulerProps){
     };
 
     const handleUpdateEventSelect = async (changeInfo: any) => {
-        try {
-            const eventCalendarUpdated = {
-                eventCalendar: {
-                    id: changeInfo.event.id,
-                    title: changeInfo.event.title,
-                    start: changeInfo.event.startStr,
-                    end: changeInfo.event.endStr,
-                    backgroundColor: changeInfo.event.backgroundColor,
-                    textColor: changeInfo.event.textColor,
-                },
-            };
+        const data = JSON.stringify({
+            "id": changeInfo.event.id,
+            "title": changeInfo.event.title,
+            "start": changeInfo.event.start,
+            "end": changeInfo.event.end,
+            "backgroundColor": changeInfo.backgroundColor,
+            "textColor":changeInfo.textColor,
+        });
 
-            await updateEventCalendar(eventCalendarUpdated);
-        } catch (err) {
-            toast.error('There was an error updating the event');
-        }
+        const config = {
+            method: 'post',
+            url: 'http://localhost:8765/api/updateEvent',
+            headers: {
+                'Authorization': localStorage.getItem("Token"),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(async function (response) {
+                console.log(JSON.stringify(response.data));
+                toast.success("Update success!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                await timeout(1000);
+                window.location.reload()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
     let cal = FullCalendar
 
     return(
+        <>
+        <ToastContainer />
         <div className={"dark:bg-gray-400 h-1/2 justify-self-center"}>
             <ModalInfosEventCalendar
                 open={modalInfosEvent.isOpen}
@@ -106,5 +131,6 @@ export default function Calendar(eventsCalendar:CalendarSchedulerProps){
             //events={eventsCalendar}
         />
         </div>
+        </>
     )
 }

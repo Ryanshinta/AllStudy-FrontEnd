@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
-import {Modal, TextField,Button} from "@mui/material";
+import {Modal, TextField, Button, Alert} from "@mui/material";
 import {ListColorsCard} from "./hooks/ListColorsCard";
 import {toast} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import {BackgroundColorRounded, BoxContainer, SelectColors} from "./stlyes";
 import "./hooks/EventApi"
 import {createEventCalendar, deleteEventCalendar, updateEventCalendar} from "./hooks/EventApi";
@@ -24,19 +25,21 @@ export const ModalInfosEventCalendar = ({
 
     useEffect(()=>{
         if (isEditCard){
-            setTitle(eventInfo.events.title);
+            console.log(eventInfo)
+            setTitle(eventInfo.event.title);
             setCardColor(
                 {
                     backgroundColor: eventInfo.event.backgroundColor,
                     textColor: eventInfo.event.textColor,
                 });
-        }else {
-            setTitle('');
-            setCardColor({
-                backgroundColor: '#039be5',
-                textColor: '#ffffff'
-            });
         }
+        // else {
+        //     setTitle('');
+        //     setCardColor({
+        //         backgroundColor: '#039be5',
+        //         textColor: '#ffffff'
+        //     });
+        // }
     },[eventInfo,isEditCard]);
 
     function handleSelectCardColor(color) {
@@ -44,49 +47,86 @@ export const ModalInfosEventCalendar = ({
             backgroundColor: color.backgroundColor,
             textColor: color.textColor,
         });
+        console.log("change color")
     };
 
     const handleDeleteEvent = async () => {
-        try {
-            await deleteEventCalendar(eventInfo.event.id);
-            eventInfo.event.remove();
-        } catch (error) {
-            toast.error('There was an error deleting the event');
-        } finally {
-            setTitle('');
-            handleClose();
-        }
+        console.log(eventInfo)
+        const data = JSON.stringify({
+            "id": eventInfo.event.id
+        });
+
+        const config = {
+            method: 'post',
+            url: 'http://localhost:8765/api/deleteEvent',
+            headers: {
+                'Authorization': localStorage.getItem("Token"),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(async function (response) {
+                console.log(JSON.stringify(response.data));
+                toast.success("Delete success!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                await timeout(1000);
+                window.location.reload()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+
     };
 
     const handleUpdatedEvent = async () => {
-        try {
+        const data = JSON.stringify({
+            "id": eventInfo.event.id,
+            "title": title === '' ? 'Untitled' : title,
+            "start": eventInfo.event.start,
+            "end": eventInfo.event.end,
+            "backgroundColor": cardColor.backgroundColor,
+            "textColor":cardColor.textColor,
+        });
 
-            const eventCalendarUpdated = {
-                eventCalendar: {
-                    _id: eventInfo.event.id,
-                    title: title !== '' ? title : 'Untitled',
-                    start: eventInfo.event.startStr,
-                    end: eventInfo.event.endStr,
-                    backgroundColor: cardColor.backgroundColor,
-                    textColor: cardColor.textColor,
-                },
-            };
+        const config = {
+            method: 'post',
+            url: 'http://localhost:8765/api/updateEvent',
+            headers: {
+                'Authorization': localStorage.getItem("Token"),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
 
-            const currentEvent = await getEventById(eventInfo.event.id);
-
-            if (currentEvent) {
-                currentEvent.setProp('title', title !== '' ? title : 'Untitled');
-                currentEvent.setProp('backgroundColor', cardColor.backgroundColor);
-                currentEvent.setProp('textColor', cardColor.textColor);
-            }
-
-            await updateEventCalendar(eventCalendarUpdated);
-        } catch (error) {
-            toast.error('There was an error updating the event');
-        } finally {
-            setTitle('');
-            handleClose();
-        }
+        axios(config)
+            .then(async function (response) {
+                console.log(JSON.stringify(response.data));
+                toast.success("Update success!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                await timeout(1000);
+                window.location.reload()
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     };
 
 
@@ -128,16 +168,30 @@ export const ModalInfosEventCalendar = ({
         };
 
         axios(config)
-            .then(function (response) {
+            .then(async function (response) {
                 console.log(JSON.stringify(response.data));
-                //return response.data
+
+                toast.success("Add Event success!", {
+                    position: "bottom-center",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "colored",
+                });
+                await timeout(1000);
             })
             .catch(function (error) {
                 console.log(error);
             });
+        window.location.reload();
     };
-    
-    
+
+    function timeout(delay: number) {
+        return new Promise( res => setTimeout(res, delay) );
+    }
     
     return(
         <Modal open={open} onClose={handleClose}>
