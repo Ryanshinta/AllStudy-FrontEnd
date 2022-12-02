@@ -3,7 +3,7 @@ import {useState} from "react";
 import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
-import {addComment, addLike} from "../../feature/followingPostSlice";
+import {addComment, addLove} from "../../feature/followingPostSlice";
 import {RiSendPlane2Fill} from "react-icons/ri";
 
 function Post(props) {
@@ -28,10 +28,10 @@ function Post(props) {
     function handleLikeClick(e){
         if (!props.likeList.includes(currentUserId)){
             setLikeState(true);
-            dispatch(addLike({postId: postId, userId: currentUserId}));
+            dispatch(addLove({postId: postId, userId: currentUserId}));
         }else {
             setLikeState(false);
-            dispatch(addLike({postId: postId, userId: currentUserId}));
+            dispatch(addLove({postId: postId, userId: currentUserId}));
         }
     }
 

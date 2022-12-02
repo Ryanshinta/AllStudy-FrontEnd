@@ -1,6 +1,7 @@
 import * as React from 'react';
 import Button from '@mui/material/Button';
 import IosShareIcon from '@mui/icons-material/IosShare';
+import HttpsIcon from '@mui/icons-material/Https';
 import {Box, ClickAwayListener, IconButton, Tooltip} from "@mui/material";
 import {IconBase} from "react-icons";
 import {useState} from "react";
@@ -30,6 +31,9 @@ function RoomCard(props) {
             className="h-60 relative flex flex-col overflow-hidden rounded-2xl bg-white text-gray-600 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lg">
             <div className="flex justify-center flex-col space-y-2 p-4 font-bold">
                 {props.title}
+
+
+
             </div>
 
             <div className={"flex"}>
@@ -52,6 +56,11 @@ function RoomCard(props) {
                 <Tooltip title={"Click to Share"}>
                     <IconButton onClick={handleShareRoom}>
                         <IosShareIcon/>
+                    </IconButton>
+                </Tooltip>
+                <Tooltip title={"The Room is private"}>
+                    <IconButton>
+                        <HttpsIcon/>
                     </IconButton>
                 </Tooltip>
             </div>

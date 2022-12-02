@@ -48,15 +48,15 @@ export default function TodoList({ listAllEventsCalendar }: IHomeProps) {
        getAllEventsCalendar()
     },[])
 
-
-
+if (listEventsCalendar === undefined){
+    return null
+}else {
     return (
         <>
-
             <Layout>
                 <Calendar  eventsCalendar={listEventsCalendar}/>
-
             </Layout>
         </>
     )
+}
 }

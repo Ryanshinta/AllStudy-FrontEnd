@@ -2,7 +2,7 @@ import axios from "axios";
 
 export async function deleteEventCalendar(param) {
     const data = JSON.stringify({
-        "id": "638224189f35da512df347c4"
+        "id": localStorage.getItem("UserID")
     });
 
     const config = {

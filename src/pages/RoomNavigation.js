@@ -7,23 +7,21 @@ import RoomCard from "../components/VideoRoom/RoomCard";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
-export default function RoomNavigation() {
 
+// function HandleJoinRoom(sessionID) {
+//     window.location.href="/videoRoom/videoRoom.html?SessionID="+sessionID;
+// }
+
+export default function RoomNavigation() {
     const PublicRoom = [
         {
-            title: 'Group focus(50min)', Desc: 'Lorem ipsum dolor sit amet, volumus apeirian eos eu, ex tan' +
-                'tas tibique copiosae mei. No nam vidit omittam invenire,' +
-                ' at corpora persecuti interpretaris sed.'
+            title: 'Group focus(50min)', Desc: 'Public Room A for All the user use',SessionId:"PublicA"
         },
         {
-            title: 'Group focus(40min)', Desc: 'Lorem ipsum dolor sit amet, volumus apeirian eos eu, ex tan' +
-                'tas tibique copiosae mei. No nam vidit omittam invenire,' +
-                ' at corpora persecuti interpretaris sed.'
+            title: 'Group focus(40min)', Desc: 'Public Room B for All the user use',SessionId:"PublicB"
         },
         {
-            title: 'Group focus(30min)', Desc: 'Lorem ipsum dolor sit amet, volumus apeirian eos eu, ex tan' +
-                'tas tibique copiosae mei. No nam vidit omittam invenire,' +
-                ' at corpora persecuti interpretaris sed.'
+            title: 'Group focus(30min)', Desc: 'Public Room C for All the user use',SessionId:"PublicC"
         },
     ]
 
@@ -40,6 +38,7 @@ export default function RoomNavigation() {
 
         axios(config)
             .then(function (response) {
+                console.log(response.data.payload);
                 setAllRoom(response.data.payload);
             })
             .catch(function (error) {
@@ -53,8 +52,10 @@ export default function RoomNavigation() {
 
     function handleRoomJoinClick() {
         //let navigate =  useNavigate()
-
+        console.log("test")
     }
+
+
 
     return (
         <>
@@ -80,7 +81,9 @@ export default function RoomNavigation() {
                                 </div>
                                 <div className=" gap-2 px-4 pb-4">
                                     <div className="btn btn-md group bg-primary px-2.5 pr-4 text-white right-0">
-                                        <Button variant="contained" color="primary">Join Room</Button>
+                                        <Button variant="contained" color="primary" onClick={()=>{
+                                            window.location.href="/videoRoom/videoRoom.html?SessionID="+Room.SessionId;
+                                        }} >Join Room</Button>
                                     </div>
                                 </div>
 
