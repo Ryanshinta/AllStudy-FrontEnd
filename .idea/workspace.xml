@@ -4,14 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4389dcb6-9023-4656-af5f-1a8e527ae0a7" name="Changes" comment="public room">
+    <list default="true" id="4389dcb6-9023-4656-af5f-1a8e527ae0a7" name="Changes" comment="search public room">
+      <change afterPath="$PROJECT_DIR$/src/components/LoginPage/RecoveryPassword.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/LoginPage/UpdatePassword.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/ForgotPassword.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/pages/ResetPassword.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_16-Nov-22_03_05_PM__Changes_.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Dashboard/SideBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Dashboard/SideBar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LoginPage/Header.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LoginPage/Header.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/LoginPage/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/LoginPage/Login.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/PrivateChatRoom/PrivateChatRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PrivateChatRoom/PrivateChatRoom.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/PublicChatRoom/PublicChatRoom.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/PublicChatRoom/PublicChatRoom.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/PrivateChat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/PrivateChat.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/PublicChat.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/PublicChat.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/HomePage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/HomePage.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +74,9 @@
       <workItem from="1667810795481" duration="110786000" />
       <workItem from="1668841733388" duration="15118000" />
       <workItem from="1668966853753" duration="31425000" />
-      <workItem from="1669875310753" duration="7994000" />
+      <workItem from="1669875310753" duration="15913000" />
+      <workItem from="1669913852898" duration="5165000" />
+      <workItem from="1669978175023" duration="22101000" />
     </task>
     <task id="LOCAL-00001" summary="login and register">
       <created>1668013132408</created>
@@ -99,7 +106,14 @@
       <option name="project" value="LOCAL" />
       <updated>1669877360144</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="search public room">
+      <created>1669885372943</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1669885372943</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,6 +134,7 @@
     <MESSAGE value="login and register" />
     <MESSAGE value="disable formik" />
     <MESSAGE value="public room" />
-    <option name="LAST_COMMIT_MESSAGE" value="public room" />
+    <MESSAGE value="search public room" />
+    <option name="LAST_COMMIT_MESSAGE" value="search public room" />
   </component>
 </project>
