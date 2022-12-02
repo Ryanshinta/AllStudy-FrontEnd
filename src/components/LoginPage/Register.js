@@ -4,6 +4,8 @@ import {useForm} from "react-hook-form";
 import {Form, Button} from 'semantic-ui-react';
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import imageCompression from "browser-image-compression";
+import FileBase64 from 'react-file-base64';
 
 const Signup = () => {
     const [firstname, setFirstname] = useState('');
@@ -13,6 +15,9 @@ const Signup = () => {
     const [phone, setPhone] = useState('');
     const [pass, setPass] = useState('');
     const [message, setMessage] = useState('');
+    const [picture, setPicture] = useState('');
+    const [file64String, setFile64String] = useState('');
+    const [file64StringWithType, setFile64StringWithType] = useState(null);
 
     const navigate = useNavigate();
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
@@ -25,7 +30,54 @@ const Signup = () => {
         addUser(data);
     }
 
+    function onUploadFileChange(e) {
+        setFile64String(null);
+        if (e.target.files < 1 || !e.target.validity.valid) {
+            return;
+        }
+        compressImageFile(e);
+    }
+
+    function fileToBase64(file, cb) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            cb(null, reader.result);
+        };
+        reader.onerror = function (error) {
+            cb(error, null);
+        };
+    }
+
+    async function compressImageFile(event) {
+        const imageFile = event.target.files[0];
+
+        const options = {
+            maxWidthOrHeight: 250,
+            useWebWorker: true,
+        };
+        try {
+            const compressedFile = await imageCompression(imageFile, options);
+            // input file is compressed in compressedFile, now write further logic here
+
+            fileToBase64(compressedFile, (err, result) => {
+                if (result) {
+                    setPicture(result);
+                    //   console.log(file);
+                    //   console.log(String(result.split(",")[1]));
+                    setFile64StringWithType(result);
+                    setFile64String(String(result.split(",")[1]));
+                }
+            });
+        } catch (error) {
+            setFile64String(null);
+            // console.log(error);
+        }
+    }
+
     const addUser = async (data) => {
+        console.log(picture);
+        console.log(data);
         const response = await axios({
             method: "POST",
             url: "http://localhost:8765/api/users/save",
@@ -36,6 +88,7 @@ const Signup = () => {
                 firstName:data.firstName,
                 lastName:data.lastName,
                 password:data.password,
+                profile:picture,
                 role:"USER"
             },
         });
@@ -45,7 +98,7 @@ const Signup = () => {
 
         if (response.data !== null && response.data.status === "success"){
             console.log("success")
-            // navigate("/Dashboar");
+            navigate("/Signin");
         }
     }
 
@@ -101,11 +154,13 @@ const Signup = () => {
                     </Form.Field>
                     <Form.Field>
                         <select id="gender"
+                                onChange={event => setGender(event.target.value)}
                                 placeholder="gender"
+                                {...register("gender", {required: true})}
                                 className="border border-neutral-300 text-neutral-400 text-base rounded focus:ring-blue-500 focus:border-blue-500 block w-full h-fit dark:bg-gray-700 p-2 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                            <option selected>Gender</option>
-                            <option value="F">Female</option>
-                            <option value="M">Male</option>
+                            <option selected value="gender">Gender</option>
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
                         </select>
                     </Form.Field>
                     <Form.Field>
@@ -218,6 +273,22 @@ const Signup = () => {
                             <span className="font-medium">Please check! </span>Must match with above
                         </div>
                     </div>}
+                </div>
+                <div className="mb-5">
+                    <Form.Field>
+                        <label className="block mb-2 text-lg text-gray-900 dark:text-white"
+                               htmlFor="file_input">Upload Profile Picture</label>
+                        <div className="flex space-x-3 font-thin text-sm text-gray-600 -mb-1">
+                            <input className={
+                                "file:mr-4 file:py-2 file:px-4\n" +
+                                "      file:rounded-full file:border-0\n" +
+                                "      file:text-sm file:font-semibold\n" +
+                                "      file:bg-violet-50 file:text-violet-700\n" +
+                                "      hover:file:bg-violet-100"
+                            } type="file" id={"file"} accept="image/*" onChange={onUploadFileChange}/>
+                            <label htmlFor={"file"}></label>
+                        </div>
+                    </Form.Field>
                 </div>
                 <Button type='submit'
                         className="w-full focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Signup</Button>

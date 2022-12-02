@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import {AiFillPieChart, AiOutlineArrowLeft} from "react-icons/ai";
 import {SiFuturelearn, SiOpenaccess} from "react-icons/si";
-import {BiVideo, BiChat, BiBarChartAlt2, BiUserPlus, BiNotepad, BiCompass, BiLogInCircle, BiLogOutCircle} from "react-icons/bi";
+import {BiVideo, BiChat, BiBarChartAlt2, BiUserPlus, BiLock, BiNotepad, BiCompass, BiLogInCircle, BiLogOutCircle} from "react-icons/bi";
 import {BsPeople} from "react-icons/bs";
 import {CgProfile} from "react-icons/cg";
 
@@ -25,7 +25,8 @@ export default function SideBar() {
     const Menus = [
         { title: 'Dashboard', path: '/', src: <BiBarChartAlt2 /> },
         { title: 'Study Room', path: '/RoomNavigation', src: <BiVideo /> },
-        { title: 'Chat Room', path: '/Chat', src: <BiChat /> },
+        { title: 'Public Chat', path: '/PublicChat', src: <BiChat /> },
+        { title: 'Private Chat', path: '/PrivateChat', src: <BiLock /> },
         { title: 'Study Partner', path: '/Partner', src: <BiUserPlus /> },
         { title: 'Community', path: '/', src: <BiCompass /> },
         { title: 'To-Do List', path: '/TodoList', src: <BiNotepad /> },

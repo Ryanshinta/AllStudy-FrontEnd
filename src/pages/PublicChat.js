@@ -1,13 +1,12 @@
 import Layout from "../components/Dashboard/Layout";
-import ChatRoom from "../components/ChatRoom/ChatRoom.js";
-import '../index.css';
+import PublicChatRoom from "../components/PublicChatRoom/PublicChatRoom";
 
-export default function Chat(){
+export default function PublicChat(){
     return(
         <>
             <Layout>
                 <div className="ml-5 mr-5">
-                <ChatRoom/>
+                    <PublicChatRoom/>
                 </div>
             </Layout>
         </>
