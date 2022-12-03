@@ -3,6 +3,7 @@ import {Form, Button} from 'semantic-ui-react';
 import axios from "axios";
 import {useEffect, useState} from "react";
 import Moment from 'moment';
+import {useNavigate} from "react-router-dom";
 import firebase from "../../firebase";
 import {ToastContainer, toast} from "react-toastify";
 import imageCompression from "browser-image-compression";
@@ -10,6 +11,7 @@ import {BiTrash} from "react-icons/bi";
 
 
 const PublicChatRoom = () => {
+    const navigate = useNavigate();
     const [roomName, setRoomName] = useState('');
     const [rooms, setRooms] = useState([]);
     const [searchRooms, setSearchRooms] = useState([]);
@@ -301,13 +303,16 @@ const PublicChatRoom = () => {
     };
 
     useEffect(() => {
+        if(localStorage.getItem("Token") === null){
+            navigate("/");
+        }else {
         const readPublicRoom = async () => {
             firebase.database().ref('roomusers/').orderByChild('username').equalTo(localStorage.getItem("UserName")).on('value', resp => {
                 setRooms([]);
                 setRooms(snapshotToArray(resp));
             });
         };
-        readPublicRoom();
+        readPublicRoom();}
     }, []);
 
     const snapshotToArray = (snapshot) => {

@@ -1,5 +1,6 @@
 import Layout from "../components/Dashboard/Layout";
 import PublicChatRoom from "../components/PublicChatRoom/PublicChatRoom";
+import {useEffect} from "react";
 
 export default function PublicChat(){
     return(
