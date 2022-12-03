@@ -1,258 +1,783 @@
-import React from "react";
+import React, {useRef} from "react";
 import {Form, Button} from 'semantic-ui-react';
-import {TextField} from "@mui/material";
-import {CheckBox} from "@mui/icons-material";
 import axios from "axios";
 import {useEffect, useState} from "react";
-import {useForm} from "react-hook-form";
+import Moment from 'moment';
+import firebase from "../../firebase";
+import {ToastContainer, toast} from "react-toastify";
+import imageCompression from "browser-image-compression";
+import {BiTrash} from "react-icons/bi";
 
 
 const PrivateChatRoom = () => {
-
-    let arrFollowings = [];
-    const [followings, setFollowings] = useState(arrFollowings);
-    const [messages, setMessages] = useState([]);
-    const [partnerInfo, setPartnerInfo] = useState([]);
+    const [roomName, setRoomName] = useState('');
+    const [rooms, setRooms] = useState([]);
+    const [searchRooms, setSearchRooms] = useState([]);
+    const [roomUsers, setRoomUsers] = useState([]);
     const [chat, setChat] = useState('');
+    const [chats, setChats] = useState([]);
+    const [msgID, setMsgID] = useState([]);
+    const input = useRef(null);
+    const endMessage = useRef(null);
+    const [passcode, setPasscode] = useState('');
+    const [exitRoom, setExitRoom] = useState('');
+    const [showSearch, setShowSearch] = useState(false);
+    const [joinRoom, setJoinRoom] = useState(false);
+    const [showConversation, setShowConversation] = useState(false);
+    const [groupIconRequest, setGroupIconRequest] = useState(false);
+    const [showDeleteMsg, setShowDeleteMsg] = useState(false);
+    const [file64String, setFile64String] = useState('');
+    const [file64StringWithType, setFile64StringWithType] = useState(null);
+    const [profile, setProfile] = useState('');
 
-    const getFollowing = async () => {
-        const response = await axios({
-            method: "POST",
-            url: "http://localhost:8765/api/users/getFollowing",
-            headers: {
-                Authorization: localStorage.getItem("Token"),
-            },
-            data: {
-                email: localStorage.getItem("UserEmail")
+    const uploadGroupIcon = (name) => {
+        setGroupIconRequest(true);
+        console.log("hello");
+    }
+
+    const closeConfirmDelete = () => {
+        setShowDeleteMsg(false);
+    }
+
+    const closeGroupIconRequest = () => {
+        setGroupIconRequest(false);
+    }
+
+    const deleteMessage = (id) => {
+        setShowDeleteMsg(true)
+        setMsgID(id);
+    }
+
+    const confirmDeleteMsg = (id) => {
+        firebase.database().ref('privateChats/').orderByChild("id").equalTo(id).once('value', snapshot => {
+            if (snapshot.exists()) {
+                snapshot.forEach(function (child) {
+                    child.ref.remove();
+                });
+            } else {
+                console.log("no found");
             }
         });
+        setShowDeleteMsg(false);
+    }
 
-        if (response.data !== null && response.data.status === "fail") {
-            console.log("failed");
+    const newPublicRoom = (name) => {
+        const str = name;
+        if (str.toString().length === 0 || profile.length === 0) {
+            showFailMessage("Roomname or icon cannot be empty!");
+        } else {
+            firebase.database().ref('privateRooms/').orderByChild("roomname").equalTo(name).once('value', snapshot => {
+                if (snapshot.exists()) {
+                    showFailMessage("Room Existed!");
+                } else {
+                    showSuccessMessage(name + " created successfully!");
+                    const newRoom = firebase.database().ref('privateRooms/').push();
+                    newRoom.set({
+                        roomname: name,
+                        type: "public",
+                        icon: profile,
+                        passcode: passcode,
+                    });
+                }
+            });
+            firebase.database().ref('privateRoomusers/').orderByChild("id").equalTo(name + localStorage.getItem("UserName")).once('value', snapshot => {
+                if (snapshot.exists()) {
+                    console.log("roomuser existed");
+                } else {
+                    const newRoomUser = firebase.database().ref('privateRoomusers/').push();
+                    newRoomUser.set({
+                        id: name + localStorage.getItem("UserName"),
+                        roomname: name,
+                        username: localStorage.getItem("UserName"),
+                        status: "online",
+                        icon: profile,
+                        profile: localStorage.getItem("UserProfile")
+                    });
+                }
+            });
         }
+        setGroupIconRequest(false);
+    }
 
-        if (response.data !== null && response.data.status === "success") {
-            console.log("success");
-            arrFollowings = response.data.payload;
-            setFollowings(arrFollowings);
-            console.log(response.data.payload);
+    function onUploadFileChange(e) {
+        setFile64String(null);
+        if (e.target.files < 1 || !e.target.validity.valid) {
+            return;
+        }
+        compressImageFile(e);
+    }
+
+    function fileToBase64(file, cb) {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            cb(null, reader.result);
+        };
+        reader.onerror = function (error) {
+            cb(error, null);
+        };
+    }
+
+    async function compressImageFile(event) {
+        const imageFile = event.target.files[0];
+
+        const options = {
+            maxWidthOrHeight: 250,
+            useWebWorker: true,
+        };
+        try {
+            const compressedFile = await imageCompression(imageFile, options);
+            // input file is compressed in compressedFile, now write further logic here
+
+            fileToBase64(compressedFile, (err, result) => {
+                if (result) {
+                    setProfile(result);
+                    //   console.log(file);
+                    //   console.log(String(result.split(",")[1]));
+                    setFile64StringWithType(result);
+                    setFile64String(String(result.split(",")[1]));
+                }
+            });
+        } catch (error) {
+            setFile64String(null);
+            // console.log(error);
         }
     }
 
-    const getChatMessages = (email) => {
-        setPartnerInfo(email);
+    function showSuccessMessage(inputMessage) {
+        toast.success(inputMessage, {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
     }
 
-    const sendMessage = (data) => {
-        console.log(data);
+    function showFailMessage(inputMessage) {
+        toast.error(inputMessage, {
+            position: "bottom-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+        });
     }
 
+    const searchPublicRoom = (keyword) => {
+        if (keyword.toString().length === 0) {
+            console.log("no room found");
+        } else {
+            const findRoom = async () => {
+                firebase.database().ref('privateRooms').orderByChild("roomname").startAt(keyword).endAt(keyword + "\uf8ff").on('value', resp => {
+                    setSearchRooms([]);
+                    setSearchRooms(snapshotToArray(resp));
+                })
+            };
+            findRoom();
+            setShowSearch(true);
+        }
+    };
+
+    const showJoinRoomMsg = (roomname, roomicon) => {
+        setRoomName(roomname);
+        setProfile(roomicon);
+        firebase.database().ref('privateRoomusers/').orderByChild("id").equalTo(roomname + localStorage.getItem("UserName")).once('value', snapshot => {
+            if (snapshot.exists()) {
+                setShowConversation(true);
+                setJoinRoom(false);
+                enterChatRoom(roomname, roomicon);
+            } else {
+                setShowConversation(false);
+                setJoinRoom(true);
+            }
+        });
+    }
+
+    const enterChatRoom = (roomname, roomicon) => {
+        firebase.database().ref('privateRooms/').orderByChild("roomname").equalTo(roomname).once('value', snapshot => {
+            if (snapshot.exists()) {
+                snapshot.forEach(function (child) {
+                    const str = JSON.stringify(child);
+                    const arr = JSON.parse(str);
+                    if (Object.values(arr).includes(passcode)) {
+                        showSuccessMessage("Joined Successfully")
+                        firebase.database().ref('privateRoomusers/').orderByChild("id").equalTo(roomname + localStorage.getItem("UserName")).once('value', snapshot => {
+                            if (snapshot.exists()) {
+                                console.log("roomuser existed");
+                            } else {
+                                const newRoomUser = firebase.database().ref('privateRoomusers/').push();
+                                newRoomUser.set({
+                                    id: roomname + localStorage.getItem("UserName"),
+                                    roomname: roomname,
+                                    username: localStorage.getItem("UserName"),
+                                    status: "online",
+                                    icon: roomicon,
+                                    profile: localStorage.getItem("UserProfile")
+                                });
+                            }
+                        });
+
+                        setExitRoom(roomName);
+                        setRoomName(roomname);
+                        const newMessage = firebase.database().ref('privateChats/').push();
+
+                        newMessage.set({
+                            roomname: roomname,
+                            username: localStorage.getItem("UserName"),
+                            date: Moment(new Date()).format('HH:mm'),
+                            message: localStorage.getItem("UserName") + " enter the room",
+                            type: "join"
+                        });
+                        setShowConversation(true);
+                        readMessages(roomname);
+                        endMessage.current?.scrollIntoView({behavior: 'smooth'});
+                        closeJoinMsg();
+                    } else {
+                        showFailMessage("Incorrect passcode")
+                        console.log("wrong");
+                    }
+                });
+            } else {
+                showFailMessage("No room existed")
+            }
+        });
+        allRoomUsers(roomname);
+        if (exitRoom.length === 0) {
+            console.log("no room is exit");
+        } else {
+            const newMessage = firebase.database().ref('privateChats/').push();
+            newMessage.set({
+                roomname: exitRoom,
+                username: localStorage.getItem("UserName"),
+                date: Moment(new Date()).format('HH:mm'),
+                message: localStorage.getItem("UserName") + " leave the room",
+                type: "exit"
+            });
+        }
+    }
+
+    const leaveRoom = (roomname, username) => {
+        console.log(roomname);
+        console.log(username);
+        const id = roomname + username;
+        firebase.database().ref('privateRoomusers/').orderByChild("id").equalTo(id).once('value', snapshot => {
+            if (snapshot.exists()) {
+                snapshot.forEach(function (child) {
+                    child.ref.remove();
+                });
+                setShowConversation(false);
+            } else {
+                console.log("no found");
+            }
+        });
+    }
+
+    const sendMessage = (message) => {
+        console.log(message);
+        setChat(message);
+        const newMessage = firebase.database().ref('privateChats/').push();
+        newMessage.set({
+            roomname: roomName,
+            username: localStorage.getItem("UserName"),
+            date: Moment(new Date()).format('HH:mm'),
+            message: message,
+            type: "message",
+            id: Date.now().toString() + roomName
+        });
+        input.current.value = "";
+        readMessages(roomName);
+    }
+
+    const readMessages = (roomname) => {
+        const readAllChats = async () => {
+            firebase.database().ref('privateChats/').orderByChild('roomname').equalTo(roomname).on('value', resp => {
+                setChats([]);
+                setChats(snapshotToArray(resp));
+            });
+        };
+        readAllChats(roomname);
+        endMessage.current?.scrollIntoView({behavior: 'smooth'});
+    };
+
+    const allRoomUsers = (roomname) => {
+        const readRoomUser = async () => {
+            firebase.database().ref('privateRoomusers/').orderByChild('roomname').equalTo(roomname).on('value', resp => {
+                setRoomUsers([]);
+                setRoomUsers(snapshotToArray(resp));
+            });
+        };
+        readRoomUser();
+    };
 
     useEffect(() => {
-        getFollowing();
+        const readPublicRoom = async () => {
+            firebase.database().ref('privateRoomusers/').orderByChild('username').equalTo(localStorage.getItem("UserName")).on('value', resp => {
+                setRooms([]);
+                setRooms(snapshotToArray(resp));
+            });
+        };
+        readPublicRoom();
     }, []);
+
+    const snapshotToArray = (snapshot) => {
+        const arrRooms = [];
+
+        snapshot.forEach((childSnapshot) => {
+            const item = childSnapshot.val();
+            item.key = childSnapshot.key;
+            arrRooms.push(item);
+        });
+
+        return arrRooms;
+    }
+
+    const closeJoinMsg = () => {
+        setJoinRoom(false)
+    }
+
+    const closeSearch = () => {
+        setShowSearch(false)
+    }
 
 
     return (
-        <div>
-            <div className="container mx-auto">
-                <div className="py-6 h-screen">
-                    <div className="flex border border-grey rounded shadow-lg h-full dark:bg-stone-200">
-
-                        <div className="w-1/3 border flex flex-col">
-
-                            <div className="py-2 px-3 bg-stone-100 flex flex-row justify-between items-center">
-                                <div>
-                                    <img className="w-10 h-10 rounded-full"
-                                         src="https://64.media.tumblr.com/69a671c9b7d6ba05566d303c7f8b64aa/3e36901baab23038-d0/s540x810/368919b24f0328825a8d91555f7a1cb31e9af740.jpg"/>
-                                </div>
-
-                                <div className="flex">
-                                    <div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                                             height="24">
-                                            <path fill="#727A7E"
-                                                  d="M12 20.664a9.163 9.163 0 0 1-6.521-2.702.977.977 0 0 1 1.381-1.381 7.269 7.269 0 0 0 10.024.244.977.977 0 0 1 1.313 1.445A9.192 9.192 0 0 1 12 20.664zm7.965-6.112a.977.977 0 0 1-.944-1.229 7.26 7.26 0 0 0-4.8-8.804.977.977 0 0 1 .594-1.86 9.212 9.212 0 0 1 6.092 11.169.976.976 0 0 1-.942.724zm-16.025-.39a.977.977 0 0 1-.953-.769 9.21 9.21 0 0 1 6.626-10.86.975.975 0 1 1 .52 1.882l-.015.004a7.259 7.259 0 0 0-5.223 8.558.978.978 0 0 1-.955 1.185z"></path>
-                                        </svg>
-                                    </div>
-                                    <div className="ml-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                                             height="24">
-                                            <path opacity=".55" fill="#263238"
-                                                  d="M19.005 3.175H4.674C3.642 3.175 3 3.789 3 4.821V21.02l3.544-3.514h12.461c1.033 0 2.064-1.06 2.064-2.093V4.821c-.001-1.032-1.032-1.646-2.064-1.646zm-4.989 9.869H7.041V11.1h6.975v1.944zm3-4H7.041V7.1h9.975v1.944z"></path>
-                                        </svg>
-                                    </div>
-                                    <div className="ml-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                                             height="24">
-                                            <path fill="#263238" fill-opacity=".6"
-                                                  d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="py-2 px-2 bg-grey-lightest">
-                                <input type="text" className="w-full px-2 py-2 text-sm bg-stone-100"
-                                       placeholder="Search or start new chat"/>
-                            </div>
-
-                            <div
-                                className="bg-grey-lighter flex-1 overflow-auto">{followings.map((following, index) => {
-                                return (
-                                    <div onClick={() => {
-                                        getChatMessages(following.email)
-                                    }}>
-                                        <div key={index}
-                                             className="px-3 flex items-center bg-grey-light hover:bg-stone-100 cursor-pointer">
-                                            <div>
-                                                <img className="h-12 w-12 rounded-full"
-                                                     src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"/>
+        <>
+            <ToastContainer/>
+            <div>
+                <div className="container mx-auto">
+                    <div className="py-6 h-screen">
+                        <div>
+                            {showDeleteMsg === true ? (
+                                <div
+                                    className="flex justify-center items-center visible overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-4 w-full md:inset-0 h-modal md:h-full">
+                                    <div className="relative w-full max-w-md h-full md:h-auto">
+                                        <div className="relative bg-cyan-800 rounded-lg shadow dark:bg-gray-700">
+                                            <button type="button"
+                                                    className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+                                                    onClick={closeConfirmDelete}>
+                                                <svg aria-hidden="true" className="w-5 h-5" fill="currentColor"
+                                                     viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span className="sr-only">Close modal</span>
+                                            </button>
+                                            <div className="p-6 text-center">
+                                                <h3 className="mb-5 text-lg font-normal text-gray-50 dark:text-gray-400">
+                                                    Confirm to delete this message ? </h3>
+                                                <button onClick={() => confirmDeleteMsg(msgID)} type="button"
+                                                        className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                                                    Confirm
+                                                </button>
+                                                <button onClick={closeConfirmDelete} type="button"
+                                                        className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                                                    Cancel
+                                                </button>
                                             </div>
-                                            <div className="ml-4 flex-1 border-b border-grey-lighter py-4 ">
-                                                <div className="flex items-bottom justify-between">
-                                                    <p className="text-grey-darkest">
-                                                        {following.username}
-                                                    </p>
-                                                    <p className="text-xs text-grey-darkest">
-                                                        {following.gender}
-                                                    </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <span></span>
+                            )}
+                        </div>
+                        <div>
+                            {groupIconRequest === true ? (
+                                <div
+                                    className="flex justify-center items-center visible overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-4 w-full md:inset-0 h-modal md:h-full">
+                                    <div className="relative w-full max-w-md h-full md:h-auto">
+                                        <div className="relative bg-cyan-800 rounded-lg shadow dark:bg-gray-700">
+                                            <button type="button"
+                                                    className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+                                                    onClick={closeGroupIconRequest}>
+                                                <svg aria-hidden="true" className="w-5 h-5" fill="currentColor"
+                                                     viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span className="sr-only">Close modal</span>
+                                            </button>
+                                            <div className="p-6 text-center">
+                                                <h3 className="mb-5 text-lg font-normal text-gray-50 dark:text-gray-400">
+                                                    Please upload a group icon for chat room</h3>
+                                                <div className="mb-4">
+                                                    <input className={
+                                                        "file:mr-4 file:py-2 file:px-4\n" +
+                                                        "      file:rounded-full file:border-0\n" +
+                                                        "      file:text-sm file:font-semibold\n" +
+                                                        "      file:bg-violet-50 file:text-violet-700\n" +
+                                                        "      hover:file:bg-violet-100"
+                                                    } type="file" id={"file"} accept="image/*"
+                                                           onChange={onUploadFileChange}/>
+                                                    <label htmlFor={"file"}></label>
                                                 </div>
-                                                <p className="text-grey-dark mt-1 text-sm">
-                                                    {following.email}
+                                                <div className="mb-4">
+                                                    <input
+                                                        placeholder="Enter a pass code for private room"
+                                                        className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        onChange={event => setPasscode(event.target.value)}
+                                                    />
+                                                </div>
+                                                <button onClick={() => newPublicRoom(roomName)} type="button"
+                                                        className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                                                    Create
+                                                </button>
+                                                <button onClick={closeJoinMsg} type="button"
+                                                        className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <span></span>
+                            )}
+                        </div>
+                        <div>
+                            {joinRoom === true ? (
+                                <div
+                                    className="flex justify-center items-center visible overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 p-4 w-full md:inset-0 h-modal md:h-full">
+                                    <div className="relative w-full max-w-md h-full md:h-auto">
+                                        <div className="relative bg-cyan-800 rounded-lg shadow dark:bg-gray-700">
+                                            <button type="button"
+                                                    className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-800 dark:hover:text-white"
+                                                    onClick={closeJoinMsg}>
+                                                <svg aria-hidden="true" className="w-5 h-5" fill="currentColor"
+                                                     viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                                    <path fill-rule="evenodd"
+                                                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                                                          clip-rule="evenodd"></path>
+                                                </svg>
+                                                <span className="sr-only">Close modal</span>
+                                            </button>
+                                            <div className="p-6 text-center">
+                                                <h3 className="mb-5 text-lg font-normal text-gray-50 dark:text-gray-400">
+                                                    Are you sure you want to join {roomName}?</h3>
+                                                <div className="mb-4">
+                                                    <input
+                                                        placeholder="Enter a pass code for private room"
+                                                        className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        onChange={event => setPasscode(event.target.value)}
+                                                    />
+                                                </div>
+                                                <button onClick={() => enterChatRoom(roomName, profile)} type="button"
+                                                        className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center mr-2">
+                                                    Join
+                                                </button>
+                                                <button onClick={closeJoinMsg} type="button"
+                                                        className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
+                                                    Cancel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ) : (
+                                <span></span>
+                            )}
+                        </div>
+                        <div className="flex border border-grey rounded shadow-lg h-full dark:bg-stone-200">
+                            <div className="w-full flex flex-row overflow-auto">
+                                <div className="w-1/4 border h-full flex flex-col">
+                                    <div className="w-full flex flex-col overflow-auto">
+                                        <div
+                                            className="py-2 px-3 bg-stone-100 flex flex-row justify-start items-center">
+                                            <div>
+                                                <img className="w-10 h-10 rounded-full"
+                                                     src={localStorage.getItem("UserProfile")}
+                                                     alt="profilePic"/>
+                                            </div>
+
+                                            <div className="flex">
+                                                <div className="ml-5">
+                                                    <p><a href="#/Profile">{localStorage.getItem("UserName")}</a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="bg-grey-lighter flex-1 overflow-auto">
+                                            <div
+                                                className="p-3 flex items-center bg-grey-light cursor-pointer">
+                                                <label htmlFor="search"
+                                                       className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                                                <div className="w-full relative">
+                                                    <input
+                                                        placeholder="Enter a Room Name"
+                                                        className="block w-full p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                                        onChange={event => setRoomName(event.target.value)}
+                                                    />
+                                                    <Button
+                                                        onClick={() => {
+                                                            searchPublicRoom(roomName)
+                                                        }}
+                                                        className="absolute text-white block right-20 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                        Search
+                                                    </Button>
+                                                    <Button onClick={() => {
+                                                        uploadGroupIcon(roomName)
+                                                    }}
+                                                            className="absolute text-white right-2.5 block bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                        Add
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                {showSearch === true ? (
+                                                    <div>
+                                                        <div className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                            <div className="flex relative items-bottom justify-between">
+                                                                <p className="text-grey-darkest">
+                                                                    Room Search - {searchRooms.length}
+                                                                </p>
+                                                                <Button
+                                                                    onClick={() => {
+                                                                        closeSearch()
+                                                                    }}
+                                                                    className="text-white mr-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                                                    Clear
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                        {searchRooms.map((room, index) => {
+                                                            return (
+                                                                <div key={index}
+                                                                     onClick={() => {
+                                                                         showJoinRoomMsg(room.roomname, room.icon)
+                                                                     }}
+                                                                     className="p-3 flex items-center bg-stone-200 hover:bg-stone-100 cursor-pointer">
+                                                                    <div>
+                                                                        <img className="h-12 w-12 rounded-full"
+                                                                             src={room.icon}/>
+                                                                    </div>
+                                                                    <div
+                                                                        className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                                        <div
+                                                                            className="flex items-bottom justify-between">
+                                                                            <p className="text-grey-darkest">
+                                                                                {room.roomname}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                ) : (
+                                                    <span></span>
+                                                )}
+                                            </div>
+                                            <div>
+                                                <div className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                    <div className="flex items-bottom justify-between">
+                                                        <p className="text-grey-darkest">
+                                                            Room Joined - {rooms.length}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {rooms.map((room, index) => {
+                                                    return (
+                                                        <div key={index}
+                                                             onClick={() => {
+                                                                 showJoinRoomMsg(room.roomname)
+                                                             }}
+                                                             className="p-3 flex items-center bg-grey-light hover:bg-stone-100 cursor-pointer">
+                                                            <div>
+                                                                <img className="h-12 w-12 rounded-full"
+                                                                     src={room.icon}/>
+                                                            </div>
+                                                            <div
+                                                                className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                                <div className="flex items-bottom justify-between">
+                                                                    <p className="text-grey-darkest">
+                                                                        {room.roomname}
+                                                                    </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="w-1/2 border">
+                                    {showConversation === false ? (
+                                        <div
+                                            className="flex justify-center items-center overflow-y-auto overflow-x top-0 right-0 left-0 z-50 p-4 w-full md:inset-0 h-modal md:h-full">
+                                            <div
+                                                className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-md hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                                                <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Yo
+                                                    ! Welcome to AllStudy Platform !</h5>
+                                                <p className="font-normal text-gray-700 dark:text-gray-400">
+                                                    This is a public chat room that allow users to communicate. You can
+                                                    join any public room you wish to meet new study partner. Hope you
+                                                    can
+                                                    have a great conversation.
                                                 </p>
                                             </div>
                                         </div>
-                                    </div>
-                                )
-                            })}
-                            </div>
+                                    ) : (
+                                        <span></span>
+                                    )}
+                                    {showConversation === true ? (
+                                        <div className="h-full flex flex-col">
+                                            <div className="flex-1 h-full overflow-auto">
+                                                <div className="flex justify-center pt-3 pb-2 px-3">
+                                                    <div
+                                                        className="rounded py-2 px-4 bg-blue-100 dark:bg-white">
+                                                        <p className="text-sm uppercase">
+                                                            {roomName}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {chats.map((chat, index) => {
+                                                    return (
+                                                        <div key={index} className="py-2 px-3">
+                                                            {chat.type === "join" || chat.type === "exit" ?
+                                                                <div className="flex justify-center mb-4">
+                                                                    <div className="rounded py-2 px-4 bg-blue-100">
+                                                                    <span className="text-xs">
+                                                                        {chat.message}
+                                                                    </span>
+                                                                        <span
+                                                                            className="text-right text-xs text-stone-400 mt-1">
+                                                                        {chat.date}
+                                                                    </span>
+                                                                    </div>
+                                                                </div> :
+                                                                <div>
+                                                                    {chat.username === localStorage.getItem("UserName") ?
+                                                                        <div className="flex justify-end mb-2">
+                                                                            <div
+                                                                                className="rounded py-2 px-3 bg-blue-100">
+                                                                                <div className="text-stone-400"
+                                                                                     onClick={() => {
+                                                                                         deleteMessage(chat.id)
+                                                                                     }}
+                                                                                ><BiTrash></BiTrash></div>
+                                                                                <p className="text-sm mt-1">
+                                                                                    {chat.message}
+                                                                                </p>
+                                                                                <p className="text-right text-xs text-stone-400 mt-1">
+                                                                                    {chat.date}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div> :
+                                                                        <div className="flex mb-2">
+                                                                            <div
+                                                                                className="rounded py-2 px-3 bg-stone-100">
+                                                                                <p className="text-sm text-blue-500">
+                                                                                    {chat.username}
+                                                                                </p>
+                                                                                <p className="text-sm mt-1">
+                                                                                    {chat.message}
+                                                                                </p>
+                                                                                <p className="text-right text-xs text-stone-400 mt-1">
+                                                                                    {chat.date}
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    )
+                                                })}
+                                                <div ref={endMessage}></div>
+                                            </div>
 
+                                            <div className="bg-stone-100 px-4 py-4 flex items-center">
+                                                <div className="flex-1 mx-4">
+                                                    <input
+                                                        ref={input}
+                                                        className="w-full border rounded px-2 py-2"
+                                                        type="text"
+                                                        onChange={event => setChat(event.target.value)}
+                                                    />
+                                                </div>
+                                                <div className="mr-2">
+                                                    <Button type='submit'
+                                                            id="send"
+                                                            onClick={() => {
+                                                                sendMessage(chat)
+                                                            }}
+                                                            className="w-fit focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Send</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <span></span>
+                                    )}
+                                </div>
+
+                                <div className="w-1/4 border h-full flex flex-col">
+                                    {showConversation === true ? (
+                                        <div>
+                                            <div className="justify-between ml-5 mt-2">
+                                                <button type="button"
+                                                        onClick={() => {
+                                                            leaveRoom(roomName, localStorage.getItem("UserName"))
+                                                        }}
+                                                        className="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Leave
+                                                    Room
+                                                </button>
+                                                <button type="button"
+                                                        onClick={() => {
+                                                            navigator.clipboard.writeText("Click on this link:  " + window.location.href + "\nAnd join us with this room name: " + roomName)
+                                                        }}
+                                                        className="py-2.5 px-5 mr-2 mb-2 text-sm font-medium text-white focus:outline-none bg-green-500 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800">Share
+                                                    Room
+                                                </button>
+
+                                            </div>
+                                            <div
+                                                className="py-2 px-3 bg-stone-100 flex flex-row justify-between items-center">
+                                                <div>
+                                                    <p>Room Users - {roomUsers.length}</p>
+                                                </div>
+                                            </div>
+                                            {roomUsers.map((roomUser, index) => {
+                                                return (
+                                                    <div key={index}
+                                                        // onClick={() => {
+                                                        //     showJoinRoomMsg(roomUser.roomname)
+                                                        // }}
+                                                         className="p-3 flex items-center bg-grey-light hover:bg-stone-100 cursor-pointer">
+                                                        <div>
+                                                            <img className="h-12 w-12 rounded-full"
+                                                                 src={roomUser.profile}/>
+                                                        </div>
+                                                        <div className="ml-4 flex-1 border-b border-grey-lighter py-4">
+                                                            <div className="flex items-bottom justify-between">
+                                                                <p className="text-grey-darkest">
+                                                                    {roomUser.username}
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <span></span>
+                                    )}
+                                </div>
+                            </div>
                         </div>
-
-
-                        <div className="w-2/3 border flex flex-col">
-
-                            <div className="py-2 px-3 bg-stone-100 flex flex-row justify-between items-center">
-                                <div className="flex items-center">
-                                    <div>
-                                        <img className="w-10 h-10 rounded-full"
-                                             src="https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg"/>
-                                    </div>
-                                    <div className="ml-4">
-                                        <p className="text-grey-darkest">
-                                            New Movie! Expendables 4
-                                        </p>
-                                        <p className="text-grey-darker text-xs mt-1">
-                                            Andrés, Tom, Harrison, Arnold, Sylvester
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex">
-                                    <div>
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                                             height="24">
-                                            <path fill="#263238" fill-opacity=".5"
-                                                  d="M15.9 14.3H15l-.3-.3c1-1.1 1.6-2.7 1.6-4.3 0-3.7-3-6.7-6.7-6.7S3 6 3 9.7s3 6.7 6.7 6.7c1.6 0 3.2-.6 4.3-1.6l.3.3v.8l5.1 5.1 1.5-1.5-5-5.2zm-6.2 0c-2.6 0-4.6-2.1-4.6-4.6s2.1-4.6 4.6-4.6 4.6 2.1 4.6 4.6-2 4.6-4.6 4.6z"></path>
-                                        </svg>
-                                    </div>
-                                    <div className="ml-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                                             height="24">
-                                            <path fill="#263238" fill-opacity=".5"
-                                                  d="M1.816 15.556v.002c0 1.502.584 2.912 1.646 3.972s2.472 1.647 3.974 1.647a5.58 5.58 0 0 0 3.972-1.645l9.547-9.548c.769-.768 1.147-1.767 1.058-2.817-.079-.968-.548-1.927-1.319-2.698-1.594-1.592-4.068-1.711-5.517-.262l-7.916 7.915c-.881.881-.792 2.25.214 3.261.959.958 2.423 1.053 3.263.215l5.511-5.512c.28-.28.267-.722.053-.936l-.244-.244c-.191-.191-.567-.349-.957.04l-5.506 5.506c-.18.18-.635.127-.976-.214-.098-.097-.576-.613-.213-.973l7.915-7.917c.818-.817 2.267-.699 3.23.262.5.501.802 1.1.849 1.685.051.573-.156 1.111-.589 1.543l-9.547 9.549a3.97 3.97 0 0 1-2.829 1.171 3.975 3.975 0 0 1-2.83-1.173 3.973 3.973 0 0 1-1.172-2.828c0-1.071.415-2.076 1.172-2.83l7.209-7.211c.157-.157.264-.579.028-.814L11.5 4.36a.572.572 0 0 0-.834.018l-7.205 7.207a5.577 5.577 0 0 0-1.645 3.971z"></path>
-                                        </svg>
-                                    </div>
-                                    <div className="ml-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24"
-                                             height="24">
-                                            <path fill="#263238" fill-opacity=".6"
-                                                  d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"></path>
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex-1 overflow-auto">
-                                <div className="py-2 px-3">
-
-                                    <div className="flex justify-center mb-2">
-                                        <div className="rounded py-2 px-4 bg-blue-100 dark:bg-white">
-                                            <p className="text-sm uppercase">
-                                                February 20, 2018
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex justify-center mb-4">
-                                        <div className="rounded py-2 px-4 bg-blue-100">
-                                            <p className="text-xs">
-                                                Messages to this chat and calls are now secured with end-to-end
-                                                encryption. Tap for more info.
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex mb-2">
-                                        <div className="rounded py-2 px-3 bg-stone-100">
-                                            <p className="text-sm text-blue-500">
-                                                Sylverter Stallone
-                                            </p>
-                                            <p className="text-sm mt-1">
-                                                Hi everyone! Glad you could join! I am making a new movie.
-                                            </p>
-                                            <p className="text-right text-xs text-stone-400 mt-1">
-                                                12:45 pm
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex justify-end mb-2">
-                                        <div className="rounded py-2 px-3 bg-blue-100">
-                                            <p className="text-sm mt-1">
-                                                Hi guys.
-                                            </p>
-                                            <p className="text-right text-xs text-stone-400 mt-1">
-                                                12:45 pm
-                                            </p>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-
-                            <div className="bg-stone-100 px-4 py-4 flex items-center">
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                                        <path opacity=".45" fill="#263238"
-                                              d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-3.505 0-5.388-1.164-5.607-1.959 0 0 5.912 1.055 10.658 0zM11.804 1.011C5.609 1.011.978 6.033.978 12.228s4.826 10.761 11.021 10.761S23.02 18.423 23.02 12.228c.001-6.195-5.021-11.217-11.216-11.217zM12 21.354c-5.273 0-9.381-3.886-9.381-9.159s3.942-9.548 9.215-9.548 9.548 4.275 9.548 9.548c-.001 5.272-4.109 9.159-9.382 9.159zm3.108-9.751c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962z"></path>
-                                    </svg>
-                                </div>
-                                    <div className="flex-1 mx-4">
-                                        <input
-                                            className="w-full border rounded px-2 py-2"
-                                            type="text"
-                                            onChange={event => setChat(event.target.value)}
-                                        />
-                                    </div>
-                                    <div className="mr-2">
-                                        <Button type='submit' onClick={() => {sendMessage(chat)}}
-                                                className="w-fit focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">Send</Button>
-                                    </div>
-                                <div>
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
-                                        <path fill="#263238" fill-opacity=".45"
-                                              d="M11.999 14.942c2.001 0 3.531-1.53 3.531-3.531V4.35c0-2.001-1.53-3.531-3.531-3.531S8.469 2.35 8.469 4.35v7.061c0 2.001 1.53 3.531 3.53 3.531zm6.238-3.53c0 3.531-2.942 6.002-6.237 6.002s-6.237-2.471-6.237-6.002H3.761c0 4.001 3.178 7.297 7.061 7.885v3.884h2.354v-3.884c3.884-.588 7.061-3.884 7.061-7.885h-2z"></path>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 

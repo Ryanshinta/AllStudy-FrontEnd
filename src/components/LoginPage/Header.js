@@ -20,10 +20,15 @@ export default function Header({
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600 mt-5">
             {paragraph} {' '}
-            <Link to={linkUrl} className="font-medium text-purple-600 hover:text-purple-500">
+            <Link to={linkUrl} className="font-medium text-purple-700 hover:text-purple-400">
                 {linkName}
             </Link>
             </p>
+            <div className="text-sm text-center">
+                <a href="#/ForgotPassword" className="font-medium text-purple-700 hover:text-purple-400">
+                    Forgot your password?
+                </a>
+            </div>
         </div>
     )
 }

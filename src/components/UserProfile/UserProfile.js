@@ -170,7 +170,10 @@ const UserProfile = () => {
     }
 
     useEffect(() => {
-        getUserInfo();
+        if(localStorage.getItem("Token") === null){
+            navigate("/")
+        }else {
+        getUserInfo();}
     }, []);
 
     return (
@@ -469,7 +472,6 @@ const UserProfile = () => {
                 </div>
             </div>
         </div>
-        // </div>
     )
 }
 

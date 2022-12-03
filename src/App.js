@@ -2,6 +2,8 @@
 import {HashRouter, Route, Routes,} from "react-router-dom";
 import Signup from './pages/Signup';
 import SignIn from './pages/Signin';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
 import DashBoard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
@@ -26,6 +28,8 @@ function App() {
                         <Route path="/" element={<HomePage/>} />
                         <Route path="/Signin" element={<SignIn/>} />
                         <Route path="/Signup" element={<Signup/>} />
+                        <Route path="/ForgotPassword" element={<ForgotPassword/>} />
+                        <Route path="/ResetPassword" element={<ResetPassword/>} />
                         <Route path="/app" element={<DashBoard/>} />
                         <Route path="/Profile" element={<Profile/>} />
                         <Route path="/Partner" element={<Partner/>} />
