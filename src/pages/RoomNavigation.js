@@ -60,9 +60,9 @@ export default function RoomNavigation() {
     return (
         <>
             <Layout>
-                <div>
+                <div className={"m-5"}>
                     <div className="mt-8 flex items-center space-x-2 st-onboarding-dashboard-step-2"><h3
-                        className="text-lg font-bold leading-[24px] text-gray-300">AllStudy Rooms</h3>
+                        className="text-lg font-bold leading-[24px] text-gray-300">  AllStudy Rooms</h3>
 
 
                     </div>

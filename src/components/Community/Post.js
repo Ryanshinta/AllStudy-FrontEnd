@@ -19,17 +19,15 @@ function Post(props) {
     const [commentState, setCommentState] = useState(false);
     const [commentContent, setCommentContent] = useState("");
     const [sendButtonDisable, setSendButtonDisable] = useState(false);
-    const [currentUserId,setCurrentUserId] = useState(
+    const [currentUserId, setCurrentUserId] = useState(
         localStorage.getItem("UserID")
     );
-    const [currentUserName,setCurrentUserName] = useState(
+    const [currentUserName, setCurrentUserName] = useState(
         localStorage.getItem("UserName")
     );
     const [profile, setProfile] = useState('');
     const [postId, setPostId] = useState(props.postId);
     const [commentPhoto, setCommentPhoto] = useState('');
-
-
 
 
     const getUserPhoto = async (data) => {
@@ -54,28 +52,51 @@ function Post(props) {
         }
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getUserPhoto();
+        handleLikeState();
     })
 
     TimeAgo.addLocale(en);
     const timeAgo = new TimeAgo("en-US");
 
-    function handleLikeClick(e){
-        //todo
+    function handleLikeClick(e) {
+        var data = JSON.stringify({
+            "postID": postId,
+            "userID": localStorage.getItem("UserID")
+        });
+
+        var config = {
+            method: 'post',
+            url: 'http://localhost:8765/api/likePost',
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                window.location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
-    function handleCommentClick(e){
+    function handleCommentClick(e) {
         setCommentState(!commentState)
     }
 
-    function handleCommentContentChange(e){
+    function handleCommentContentChange(e) {
         e.preventDefault();
         setCommentContent(e.target.value);
 
-        if (commentContent.length - 1 > 0 && commentContent.length - 1 <=100){
+        if (commentContent.length - 1 > 0 && commentContent.length - 1 <= 100) {
             setSendButtonDisable(false);
-        }else {
+        } else {
             setSendButtonDisable(true);
         }
     }
@@ -127,6 +148,14 @@ function Post(props) {
                 console.log(error);
             });
     }
+    function handleLikeState() {
+        props.likeList.forEach(f)
+        function f(item) {
+            if (item === localStorage.getItem("UserID")) {
+                setLikeState(true);
+            }
+        }
+    }
 
     return (
         <div className="w-full shadow h-auto bg-white rounded-md">
@@ -138,12 +167,12 @@ function Post(props) {
                     className="font-semibold text-sm text-gray-700">{props.userName} {props.deleteAble ?
                     <Tooltip title={"Click to Delete"}>
                         <IconButton onClick={handleDeletePostClick}>
-                            <DeleteForeverIcon  />
+                            <DeleteForeverIcon/>
                         </IconButton>
-                    </Tooltip>: <div></div>}
+                    </Tooltip> : <div></div>}
                 </p>
                     <span
-                    className="text-xs font-thin text-gray-400">{timeAgo.format(new Date(props.postDate).getTime())}</span>
+                        className="text-xs font-thin text-gray-400">{timeAgo.format(new Date(props.postDate).getTime())}</span>
                 </div>
             </div>
             <div className="mb-1"><p
@@ -152,10 +181,10 @@ function Post(props) {
             {props.image !== null ? (
                 <div className="w-full h-76 max-h-80 justify-content-center align-items-center mb-3">
                     <img
-                    src={props.image} alt="postimage"
-                    className="w-fit h-fit max-h-80 items-center"/>
+                        src={props.image} alt="postimage"
+                        className="w-fit h-fit max-h-80 items-center"/>
                 </div>
-            ):(
+            ) : (
                 <span></span>
             )}
 
@@ -163,28 +192,35 @@ function Post(props) {
                 <div
                     className="flex items-center justify-between pb-2 border-b border-gray-300 text-gray-500 text-sm">
                     <div className="flex items-center">
-                        <button className="flex items-center focus:outline-none flex items-center justify-center w-4 h-4 rounded-full bg-primary" onClick={handleLikeClick}>
-                                Like
+                        <button
+                            className="flex items-center focus:outline-none flex items-center justify-center w-4 h-4 rounded-full bg-primary"
+                            onClick={handleLikeClick}>
+                            {
+                                likeState ? <div className={"pl-2"}>   Unlike </div> : <div className={"pl-2"}>Like</div>
+                            }
                             <div className="ml-1"><p>
                                 {props.likeList.length > 0 ? props.likeList.length : null}
                             </p></div>
                         </button>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <button onClick={handleCommentClick}>{props.commentList.length > 0 ? props.commentList.length : null} Comments</button>
+                        <button
+                            onClick={handleCommentClick}>{props.commentList.length > 0 ? props.commentList.length : null} Comments
+                        </button>
                     </div>
                 </div>
             </div>
             {/* comment input*/}
-            {commentState === true ?(
+            {commentState === true ? (
                 <>
                     <div>
                         <div className="relative">
                             <input placeholder="Write a comment..."
                                    className="pt-2 pb-2 pl-3 w-full h-11 bg-slate-100 rounded-lg font-medium pr-20"
                                    value={commentContent}
-                            onChange={handleCommentContentChange}/>
-                            <button className="flex absolute right-3 top-2/4 -mt-3 items-center" disabled={sendButtonDisable} onClick={sendComment}>
+                                   onChange={handleCommentContentChange}/>
+                            <button className="flex absolute right-3 top-2/4 -mt-3 items-center"
+                                    disabled={sendButtonDisable} onClick={sendComment}>
                                 <RiSendPlane2Fill/>
                             </button>
                         </div>
@@ -201,7 +237,7 @@ function Post(props) {
                         />
                     ))}
                 </>
-            ):(
+            ) : (
                 <span></span>
             )}
 

@@ -54,6 +54,7 @@
 
             //const sessionId = localStorage.getItem("SessionID");
             const sessionId = urlParams.get("SessionID");
+
             const participantName = localStorage.getItem("UserName");
 
             console.warn('SESSION ID', sessionId);
@@ -105,10 +106,20 @@
 
 
         function createSession(sessionId) {
-            let data = JSON.stringify({
+            let data = null
+            if (sessionId === "PublicA"|| sessionId==="PublicB" || sessionId === "PublicC"){
+                data = JSON.stringify({
+                    "sessionId":sessionId,
+                    "isPublic":true,
+                });
+                console.log("createSession ",sessionId)
+            }else {
+                data = JSON.stringify({
                     "sessionId":sessionId,
                 });
                 console.log("createSession ",sessionId)
+            }
+
 
 
             const config = {

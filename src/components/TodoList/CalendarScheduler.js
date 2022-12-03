@@ -102,7 +102,6 @@ export default function Calendar(eventsCalendar:CalendarSchedulerProps){
                 handleClose={modalInfosEvent.handleClose}
                 eventInfo={eventInfos}
                 isEditCard={isEditCard}
-
             />
         <FullCalendar
             plugins={[timeGridPlugin,dayGridPlugin,interactionPlugin]}

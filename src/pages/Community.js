@@ -74,6 +74,7 @@ export default function Community() {
                                 </Tabs>
 
                                 </div>
+                                <div >
                                 {
                                     value === 0 ?(
                                         <AllPost/>
@@ -83,6 +84,7 @@ export default function Community() {
                                         <MyPost/>
                                     )
                                 }
+                                </div>
                             </div>
                         </div>
                     </div>

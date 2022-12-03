@@ -49,12 +49,14 @@ function NewRoom(){
                  "roomName": inputRoomName,
                  "roomDesc": inputDesc,
                  "password": password,
+                 "isPublic": false,
              }
         }else {
              data = JSON.stringify({
                  "sessionId":inputSessionId,
                  "roomName": inputRoomName,
                  "roomDesc": inputDesc,
+                 "isPublic": false,
             });
             console.log("createSession ",sessionId)
         }
