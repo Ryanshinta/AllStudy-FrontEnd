@@ -4,12 +4,39 @@ import IosShareIcon from '@mui/icons-material/IosShare';
 import HttpsIcon from '@mui/icons-material/Https';
 import {Box, ClickAwayListener, IconButton, Tooltip} from "@mui/material";
 import {IconBase} from "react-icons";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 
 function RoomCard(props) {
     const [open, setOpen] = useState(false);
+    const [profile, setProfile] = useState('');
 
+    const getUserPhoto = async (data) => {
+        const response = await axios({
+            method: "POST",
+            url: "http://localhost:8765/api/users/profilePhoto",
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+            },
+            data: {
+                id: props.userID
+            },
+        });
+
+        if (response.data !== null && response.data.status === "fail") {
+            console.error("Get user profile photo fail")
+        }
+
+        if (response.data !== null && response.data.status === "success") {
+            setProfile(response.data.payload.profile);
+
+        }
+    }
+
+    useEffect(() => {
+        getUserPhoto();
+    })
     function handleRoomJoinClick() {
         //localStorage.setItem("SessionID",props.sessionID);
         window.location.href="/videoRoom/videoRoom.html?SessionID="+props.sessionID;
@@ -39,7 +66,7 @@ function RoomCard(props) {
             <div className={"flex"}>
                 <a className="ml-4">
                     <img className="rounded-full max-w-none w-5 h-5"
-                         src="https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg"/>
+                         src={profile}/>
                 </a>
                 <div className="ml-2">
                     {props.userName}

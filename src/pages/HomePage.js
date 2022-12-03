@@ -28,7 +28,7 @@ function HomePage() {
 
     useEffect(() => {
         if (localStorage.getItem("Token") !== null) {
-            // navigate("/Community");
+             navigate("/Community");
         }
     });
 

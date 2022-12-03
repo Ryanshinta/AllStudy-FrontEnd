@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import {Checkbox, FormControlLabel, RadioGroup} from "@mui/material";
+import {Alert, Checkbox, FormControlLabel, RadioGroup} from "@mui/material";
 import {useEffect, useState} from "react";
 import axios from "axios";
 
@@ -16,10 +16,10 @@ function NewRoom(){
 
     const [open, setOpen] = React.useState(false);
     const [disableSessionId, setDisableSessionId] = useState(false);
-    const [inputRoomName, setInputRoomName] = useState();
-    const [inputSessionId, setInputSessionId] = useState();
-    const [inputDesc, setInputDesc] = useState();
-    const [password, setPassword] = useState();
+    const [inputRoomName, setInputRoomName] = useState("");
+    const [inputSessionId, setInputSessionId] = useState("");
+    const [inputDesc, setInputDesc] = useState("");
+    const [password, setPassword] = useState("");
 
 
     function handleDisableSessionBtn(){
@@ -33,14 +33,23 @@ function NewRoom(){
     const handleClose = () => {
         setOpen(false);
     };
-    const handleCreate = () => {
+    function handleCreate(){
+
+        debugger
+        if (inputRoomName === "" || password === ""){
+            alert("cannot create, Room Name and password cannot be null")
+            return;
+        }
+
+
         if (disableSessionId){
             createSession("",true)
         }else {
             createSession("",false)
         }
+        //window.location.reload();
 
-    };
+    }
 
     function createSession(sessionId,random) {
         let data;
@@ -49,6 +58,8 @@ function NewRoom(){
                  "roomName": inputRoomName,
                  "roomDesc": inputDesc,
                  "password": password,
+                 "userID":localStorage.getItem("UserID"),
+                 "userName":localStorage.getItem("UserName"),
                  "isPublic": false,
              }
         }else {
@@ -56,6 +67,9 @@ function NewRoom(){
                  "sessionId":inputSessionId,
                  "roomName": inputRoomName,
                  "roomDesc": inputDesc,
+                 "userID":localStorage.getItem("UserID"),
+                 "userName":localStorage.getItem("UserName"),
+                 "password": password,
                  "isPublic": false,
             });
             console.log("createSession ",sessionId)
@@ -79,7 +93,6 @@ function NewRoom(){
             .catch(function (error) {
                 console.log(error);
             });
-
     }
 
 
@@ -99,8 +112,8 @@ function NewRoom(){
         return false;
     }
 
-    function handlePasswordChange() {
-        return undefined;
+    function handlePasswordChange(e) {
+       setPassword(e.target.value)
     }
 
     return(
@@ -128,9 +141,8 @@ function NewRoom(){
                         label="Password"
                         fullWidth
                         variant="standard"
-                        disabled={disablePassword()}
-                        onChange={handlePasswordChange()}
-                        value={inputSessionId}
+                        onChange={handlePasswordChange}
+                        value={password}
 
                     />
                     <TextField

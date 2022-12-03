@@ -9,6 +9,14 @@
             crossorigin="anonymous"></script>
     <script>
         $(document).ready(async ()=>{
+
+            const password = prompt("Please enter the password for the room");
+            console.log("Password" + password);
+
+
+            CheckPassword(password)
+
+
             const webComponent = document.querySelector('openvidu-webcomponent');
             console.log(webComponent);
             webComponent.addEventListener('onSessionCreated', (event) =>{
@@ -48,12 +56,53 @@
              joinSession();
         })
 
+
+
+        function CheckPassword(password) {
+
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const sessionId = urlParams.get("SessionID");
+
+            console.log("Session id"+sessionId)
+            var data = JSON.stringify({
+                "sessionId": sessionId,
+                "password": password
+            });
+
+            var config = {
+                method: 'post',
+                url: 'http://localhost:8765/api/checkPassword',
+                headers: {
+                    Authorization: localStorage.getItem("Token"),
+                    'Content-Type': 'application/json'
+                },
+                data : data
+            };
+            axios(config)
+                .then(function (response) {
+                    //console.log("Password Check "+response.data.status);
+                })
+                .catch(function (error) {
+                    alert("Password not correct, Back to Navigation page")
+                    const url =  window.location.host;
+                    const path = "#/RoomNavigation";
+                    window.location.href = "/#/RoomNavigation";
+
+                    console.log("Error")
+                    console.error(error);
+                });
+        }
+
         async function joinSession() {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
-
-            //const sessionId = localStorage.getItem("SessionID");
             const sessionId = urlParams.get("SessionID");
+
+
+
+
+
 
             const participantName = localStorage.getItem("UserName");
 
@@ -90,22 +139,22 @@
 
         }
 
-        async function createToken(sessionId) {
-            console.log("Start createToken " + sessionId)
-            const config = {
-                method: 'post',
-                url: 'http://localhost:8765/api/sessions/' + sessionId + '/connections',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization:localStorage.getItem("Token"),
-                }
-            };
-            const res = await axios(config)
-            return res.data
-        }
+         async function createToken(sessionId) {
+             console.log("Start createToken " + sessionId)
+             const config = {
+                 method: 'post',
+                 url: 'http://localhost:8765/api/sessions/' + sessionId + '/connections',
+                 headers: {
+                     'Content-Type': 'application/json',
+                     Authorization: localStorage.getItem("Token"),
+                 }
+             };
+             const res = await axios(config)
+             return res.data
+         }
 
 
-        function createSession(sessionId) {
+        async function createSession(sessionId) {
             let data = null
             if (sessionId === "PublicA"|| sessionId==="PublicB" || sessionId === "PublicC"){
                 data = JSON.stringify({

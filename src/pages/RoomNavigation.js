@@ -15,13 +15,13 @@ import axios from "axios";
 export default function RoomNavigation() {
     const PublicRoom = [
         {
-            title: 'Group focus(50min)', Desc: 'Public Room A for All the user use',SessionId:"PublicA"
+            title: 'Group focus A', Desc: 'Public Room A for All the user use',SessionId:"PublicA"
         },
         {
-            title: 'Group focus(40min)', Desc: 'Public Room B for All the user use',SessionId:"PublicB"
+            title: 'Group focus B', Desc: 'Public Room B for All the user use',SessionId:"PublicB"
         },
         {
-            title: 'Group focus(30min)', Desc: 'Public Room C for All the user use',SessionId:"PublicC"
+            title: 'Group focus C', Desc: 'Public Room C for All the user use',SessionId:"PublicC"
         },
     ]
 
@@ -110,7 +110,8 @@ export default function RoomNavigation() {
                                         <div key={room.sessionID}>
                                         <RoomCard
                                             title={room.roomName}
-                                            userName={"tester"}
+                                            userName={room.userName}
+                                            userID={room.userID}
                                             Desc={room.roomDesc}
                                             sessionID={room.sessionID}
                                         />
