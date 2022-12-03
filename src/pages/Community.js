@@ -7,45 +7,50 @@ import {getFollowingPosts} from "../feature/followingPostSlice";
 import Post from "../components/Community/Post";
 import {getAllPost} from "../feature/allPostSlice";
 import axios from "axios";
+import {SwipeableDrawer, Tab, Tabs} from "@mui/material";
+import AllPost from "../components/Community/AllPost";
+import FollowingPost from "../components/Community/FollowingPost";
+import MyPost from "../components/Community/MyPost";
 
 
 export default function Community() {
 
-    const dispatch = useDispatch();
-    const storeFollowingPost = useSelector((state)=> state.followingPostReducer.followingPosts);
-
-    const storeAllPost = useSelector((state) => state.allPostReducer.allPost);
-
-    useEffect(()=>{
-        dispatch(getFollowingPosts());
-    },[]);
+    // const dispatch = useDispatch();
+    // const storeFollowingPost = useSelector((state)=> state.followingPostReducer.followingPosts);
+    //
+    // const storeAllPost = useSelector((state) => state.allPostReducer.allPost);
+    //
+    // useEffect(()=>{
+    //     dispatch(getFollowingPosts());
+    // },[]);
 
     // useEffect(()=>{
     //     dispatch(getAllPost());
     // },[]);
 
+    const [value, setValue] = useState(0);
+    const [allPost, setAllPost] = useState();
 
-    // const [allPost, setAllPost] = useState();
-    //
-    //
-    // async function getAllPosts() {
-    //
-    //     const response = await axios({
-    //         method: "GET",
-    //         url: "http://localhost:8765/api/getAllPost",
-    //         headers: {
-    //             Authorization: localStorage.getItem("Token"),
-    //         },
-    //     });
-    //     console.log(response.data.payload);
-    //     if (response.data !== null && response.data.status === "success") {
-    //         setAllPost(response.data.payload);
-    //     }
-    // }
-    //
-    // useEffect(()=>{
-    //     getAllPosts()
-    // },[]);
+
+    async function getAllPosts() {
+
+        const response = await axios({
+            method: "GET",
+            url: "http://localhost:8765/api/getAllPost",
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+            },
+        });
+        console.log(response.data.payload);
+        if (response.data.status === "success") {
+            setAllPost(response.data.payload);
+            //console.log(allPost);
+        }
+    }
+
+    useEffect(()=>{
+        getAllPosts()
+    },[]);
 
 
     return (
@@ -61,31 +66,22 @@ export default function Community() {
                                 <NewPost/>
 
                                 {/* post start */}
+                                <div className={"bg-white rounded-md m-3 flex justify-center" }>
+                                <Tabs aria-label={"full width tabs example"} textColor={"inherit"} value={value}>
+                                    <Tab label={"All Post"} onClick={()=>{setValue(0)}}/>
+                                     <Tab label={"Following"}onClick={()=>{setValue(1)}}/>
+                                     <Tab label={"My Post"}onClick={()=>{setValue(2)}}/>
+                                </Tabs>
 
+                                </div>
                                 {
-
-                                    storeFollowingPost !== null ? (
-                                        storeFollowingPost?.map((post) => {
-                                            return (
-                                                <Post
-                                                    key={post.post.id}
-                                                    postId={post.post.id}
-                                                    userId={post.user.id}
-                                                    userName={post.post.userName}
-                                                    content={post.post.content}
-                                                    image={post.post.image}
-                                                    likeList={post.post.like}
-                                                    commentList={post.post.comment}
-                                                    postDate={post.post.createdAt}
-                                                />
-                                            )
-                                        })
-                                    ) : (
-                                        <div>
-
-                                        </div>
+                                    value === 0 ?(
+                                        <AllPost/>
+                                    ):value === 1 ?(
+                                        <FollowingPost/>
+                                    ):(
+                                        <MyPost/>
                                     )
-
                                 }
                             </div>
                         </div>

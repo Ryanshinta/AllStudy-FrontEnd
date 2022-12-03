@@ -1,5 +1,5 @@
 import {useDispatch} from "react-redux";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import {getFollowingPosts} from "../../feature/followingPostSlice";
@@ -24,7 +24,35 @@ function NewPost() {
     const [file, setFile] = useState(null);
     const [file64String, setFile64String] = useState(null);
     const [file64StringWithType, setFile64StringWithType] = useState(null);
+    const [profile, setProfile] = useState('');
 
+    const getUserInfo = async (data) => {
+        const response = await axios({
+            method: "POST",
+            url: "http://localhost:8765/api/users/profilePhoto",
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+            },
+            data: {
+                id: localStorage.getItem("UserID")
+            },
+        });
+
+        if (response.data !== null && response.data.status === "fail") {
+            //console.log("failed");
+            console.log(response.data)
+            console.error("get User profile photo fail");
+        }
+
+        if (response.data !== null && response.data.status === "success") {
+            //console.log("success");
+            setProfile(response.data.payload.profile);
+
+        }
+    }
+    useEffect(()=>{
+        getUserInfo();
+    })
 
     function showSuccessMessage(inputMessage) {
         toast.success(inputMessage, {
@@ -159,9 +187,11 @@ function NewPost() {
                     <div>
                         <form>
                         <div className="flex items-center space-x-2 border-b pb-3 mb-2">
-                            <div className="w-10 h-10"><img src="https://picsum.photos/200"
+
+                            <div className="w-10 h-10"><img src={profile}
                                                             className="w-full h-full rounded-full"
                                                             alt="dp"/></div>
+
                             <input placeholder="Content here" value={postContent} onChange={handleContentChange}
                                 className="hover:bg-gray-200 focus:bg-gray-300 p-2 focus:outline-none flex-grow bg-gray-100 text-gray-500 text-left w-full">
                             </input>

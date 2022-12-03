@@ -64,7 +64,6 @@ const UserProfile = () => {
             setFollower(response.data.payload.follower);
             setFollowing(response.data.payload.following);
         }
-        // onSubmit(response.data);
     }
 
     function onUploadFileChange(e) {

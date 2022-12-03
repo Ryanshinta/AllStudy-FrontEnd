@@ -1,10 +1,16 @@
 import {useDispatch} from "react-redux";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import TimeAgo from "javascript-time-ago";
 
 import en from "javascript-time-ago/locale/en.json";
 import {addComment, addLove} from "../../feature/followingPostSlice";
 import {RiSendPlane2Fill} from "react-icons/ri";
+import axios from "axios";
+import CommentItem from "./CommnetItem";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import {IconButton, Tooltip} from "@mui/material";
+import IosShareIcon from "@mui/icons-material/IosShare";
+import * as React from "react";
 
 function Post(props) {
 
@@ -19,20 +25,44 @@ function Post(props) {
     const [currentUserName,setCurrentUserName] = useState(
         localStorage.getItem("UserName")
     );
-
+    const [profile, setProfile] = useState('');
     const [postId, setPostId] = useState(props.postId);
+    const [commentPhoto, setCommentPhoto] = useState('');
+
+
+
+
+    const getUserPhoto = async (data) => {
+        const response = await axios({
+            method: "POST",
+            url: "http://localhost:8765/api/users/profilePhoto",
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+            },
+            data: {
+                id: props.userId
+            },
+        });
+
+        if (response.data !== null && response.data.status === "fail") {
+            console.error("Get user profile photo fail")
+        }
+
+        if (response.data !== null && response.data.status === "success") {
+            setProfile(response.data.payload.profile);
+
+        }
+    }
+
+    useEffect(()=>{
+        getUserPhoto();
+    })
 
     TimeAgo.addLocale(en);
     const timeAgo = new TimeAgo("en-US");
 
     function handleLikeClick(e){
-        if (!props.likeList.includes(currentUserId)){
-            setLikeState(true);
-            dispatch(addLove({postId: postId, userId: currentUserId}));
-        }else {
-            setLikeState(false);
-            dispatch(addLove({postId: postId, userId: currentUserId}));
-        }
+        //todo
     }
 
     function handleCommentClick(e){
@@ -50,31 +80,69 @@ function Post(props) {
         }
     }
 
-    function sendComment(e){
-        dispatch(
-            addComment({
-                postId: postId,
-                newComment:{
+    async function sendComment(e) {
+        const response = await axios({
+            method: "post",
+            url: "http://localhost:8765/api/insertComment",
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+            },
+            data: {
+                commentEntity: {
                     userId: localStorage.getItem("UserID"),
                     userName: localStorage.getItem("UserName"),
                     content: commentContent,
                 },
-            })
-        );
+                postId: {
+                    id: postId,
+                },
+            },
+        });
+        console.log(response);
         setCommentContent("");
     }
 
 
+    function handleDeletePostClick() {
+        const data = JSON.stringify({
+            "id": props.postId
+        });
+
+        const config = {
+            method: 'POST',
+            url: 'http://localhost:8765/api/deletePostById',
+            headers: {
+                Authorization: localStorage.getItem("Token"),
+                'Content-Type': 'application/json'
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(JSON.stringify(response.data));
+                window.location.reload();
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
-        <div className="w-full shadow h-auto bg-white rounded-md m-2">
+        <div className="w-full shadow h-auto bg-white rounded-md">
             <div className="flex items-center space-x-2 p-2.5 px-4">
-                <div className="w-10 h-10"><img src="https://picsum.photos/200"
+                <div className="w-10 h-10"><img src={profile}
                                                 className="w-full h-full rounded-full"
                                                 alt="dp"/></div>
                 <div className="flex-grow flex flex-col"><p
-                    className="font-semibold text-sm text-gray-700">{props.userName}
-                </p><span
+                    className="font-semibold text-sm text-gray-700">{props.userName} {props.deleteAble ?
+                    <Tooltip title={"Click to Delete"}>
+                        <IconButton onClick={handleDeletePostClick}>
+                            <DeleteForeverIcon  />
+                        </IconButton>
+                    </Tooltip>: <div></div>}
+                </p>
+                    <span
                     className="text-xs font-thin text-gray-400">{timeAgo.format(new Date(props.postDate).getTime())}</span>
                 </div>
             </div>
@@ -122,26 +190,15 @@ function Post(props) {
                         </div>
                     </div>
 
-                    {props.commentList.map((commentItem) => (
-                        <div className="pt-6" key={commentItem.id}>
-                            {console.log(commentItem)}
-                            <div className="flex pb-4">
-                                <a className="mr-4" href="">
-                                    <img className="rounded-full max-w-none w-12 h-12"
-                                         src="https://thumbs.dreamstime.com/b/default-profile-picture-avatar-photo-placeholder-vector-illustration-default-profile-picture-avatar-photo-placeholder-vector-189495158.jpg"/>
-                                </a>
-                                <div>
-                                    <a className="font-semibold text-sm text-gray-700 mr-2"
-                                       href="#">{commentItem.userName}</a>
-                                    <span className="text-xs font-thin text-gray-400">{commentItem.date}</span>
-                                    <div className="mb-1">
-                                        <p className="text-gray-700 max-h-10 truncate px-3 text-sm">
-                                            {commentItem.content}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    {props.commentList.map((comment) => (
+
+                        <CommentItem
+                            key={comment.id}
+                            id={comment.id}
+                            userId={comment.userId}
+                            userName={comment.userName}
+                            content={comment.content}
+                        />
                     ))}
                 </>
             ):(
