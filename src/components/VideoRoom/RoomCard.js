@@ -37,15 +37,44 @@ function RoomCard(props) {
     useEffect(() => {
         getUserPhoto();
     })
-    function handleRoomJoinClick() {
-        //localStorage.setItem("SessionID",props.sessionID);
-        window.location.href="/videoRoom/videoRoom.html?SessionID="+props.sessionID;
+
+    async function handleRoomJoinClick() {
+
+        await createSession(props.sessionID)
+        window.location.href = "/videoRoom/videoRoom.html?SessionID=" + props.sessionID;
+    }
+
+    async function createSession(sessionId) {
+        let data = JSON.stringify({
+            "sessionId": sessionId,
+            "isPublic": false,
+            "userID": localStorage.getItem("UserID")
+        });
+        console.log("createSession ", sessionId)
+
+        const config = {
+            method: 'post',
+            url: 'http://localhost:8765/api/session',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: localStorage.getItem("Token"),
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     }
 
     function handleShareRoom() {
-        const url =  window.location.host;
-        const path = "/videoRoom/videoRoom.html?SessionID="+props.sessionID;
-        navigator.clipboard.writeText("Come and join me together! "+url+path);
+        const url = window.location.host;
+        const path = "/videoRoom/videoRoom.html?SessionID=" + props.sessionID;
+        navigator.clipboard.writeText("Come and join me together! " + url + path);
         setOpen((prev) => !prev);
     }
 
@@ -53,12 +82,11 @@ function RoomCard(props) {
         setOpen(false);
     }
 
-    return(
+    return (
         <div
             className="h-60 relative flex flex-col overflow-hidden rounded-2xl bg-white text-gray-600 transition-all duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-lg">
             <div className="flex justify-center flex-col space-y-2 p-4 font-bold">
                 {props.title}
-
 
 
             </div>
@@ -99,7 +127,8 @@ function RoomCard(props) {
                 </div>
             </div>
         </div>
-        )
+    )
 
 }
+
 export default RoomCard

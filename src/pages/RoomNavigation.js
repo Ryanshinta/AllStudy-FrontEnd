@@ -55,7 +55,34 @@ export default function RoomNavigation() {
         console.log("test")
     }
 
+    async function createSession(sessionId) {
+        let data = JSON.stringify({
+                "sessionId":sessionId,
+                "isPublic":true,
+                "userID":localStorage.getItem("UserID")
+            });
+            console.log("createSession ",sessionId)
 
+
+
+        const config = {
+            method: 'post',
+            url: 'http://localhost:8765/api/session',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization:localStorage.getItem("Token"),
+            },
+            data: data
+        };
+
+        axios(config)
+            .then(function (response) {
+                console.log(response.data);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    }
 
     return (
         <>
@@ -81,8 +108,10 @@ export default function RoomNavigation() {
                                 </div>
                                 <div className=" gap-2 px-4 pb-4">
                                     <div className="btn btn-md group bg-primary px-2.5 pr-4 text-white right-0">
-                                        <Button variant="contained" color="primary" onClick={()=>{
-                                            window.location.href="/videoRoom/videoRoom.html?SessionID="+Room.SessionId;
+                                        <Button variant="contained" color="primary" onClick={async () => {
+
+                                            await createSession(Room.SessionId)
+                                            window.location.href = "/videoRoom/videoRoom.html?SessionID=" + Room.SessionId;
                                         }} >Join Room</Button>
                                     </div>
                                 </div>
