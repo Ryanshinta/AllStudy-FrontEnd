@@ -23,7 +23,7 @@ export default function SideBar() {
     }
 
     const Menus = [
-        { title: 'Dashboard', path: '/', src: <BiBarChartAlt2 /> },
+        { title: 'Dashboard', path: '/Dashboard', src: <BiBarChartAlt2 /> },
         { title: 'Study Room', path: '/RoomNavigation', src: <BiVideo /> },
         { title: 'Public Chat', path: '/PublicChat', src: <BiChat /> },
         { title: 'Private Chat', path: '/PrivateChat', src: <BiLock /> },

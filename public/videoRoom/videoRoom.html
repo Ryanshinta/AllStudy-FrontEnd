@@ -10,11 +10,20 @@
     <script>
         $(document).ready(async ()=>{
 
-            const password = prompt("Please enter the password for the room");
-            console.log("Password" + password);
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            const sessionId = urlParams.get("SessionID");
+
+            if (sessionId === "PublicA" || sessionId==="PublicB" || sessionId === "PublicC"){
+                alert("Welcome to "+sessionId)
+            }else {
+                const password = prompt("Please enter the password for the room");
+                console.log("Password" + password);
+                CheckPassword(password)
+                await createSession(sessionId);
+            }
 
 
-            CheckPassword(password)
 
 
             const webComponent = document.querySelector('openvidu-webcomponent');
@@ -134,7 +143,7 @@
           */
 
         async function getToken(sessionId) {
-            const id = await createSession(sessionId);
+            //const id = await createSession(sessionId);
             return createToken(sessionId);
 
         }
@@ -160,11 +169,14 @@
                 data = JSON.stringify({
                     "sessionId":sessionId,
                     "isPublic":true,
+                    "userID":localStorage.getItem("UserID")
                 });
                 console.log("createSession ",sessionId)
             }else {
                 data = JSON.stringify({
                     "sessionId":sessionId,
+                    "isPublic":false,
+                    "userID":localStorage.getItem("UserID")
                 });
                 console.log("createSession ",sessionId)
             }
